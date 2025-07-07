@@ -1,6 +1,6 @@
 namespace xUnitTests
 {
-    public class UnitTest1
+    public class CountriesServiceTest
     {
         [Fact]
         public void Test1()

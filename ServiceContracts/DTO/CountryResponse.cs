@@ -4,7 +4,7 @@ using Entities;
 namespace ServiceContracts.DTO
 {
     /// <summary>
-    /// DTO class to return response from most of the CountryServices
+    /// DTO class for representing a country response of most of the Country Service methods
     /// </summary>
     public class CountryResponse
     {
@@ -14,7 +14,7 @@ namespace ServiceContracts.DTO
 
     public static class CountryExtensions 
     {
-        // extension method of for Country class
+        // extension method of for Country class that converts it to CountryResponse
         public static CountryResponse ToCountryResponse(this Country country)
         {
             return new CountryResponse
