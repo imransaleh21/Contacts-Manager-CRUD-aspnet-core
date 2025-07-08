@@ -12,6 +12,7 @@ namespace xUnitTests
             _countryService = new CountriesService();
         }
 
+        #region AddCountry Tests
         // When CountryAddRequest is null, it should throw an ArgumentNullException
         [Fact]
         public void AddCountry_NullCountryRequest()
@@ -83,9 +84,53 @@ namespace xUnitTests
             };
             //Act
             CountryResponse countryResponse = _countryService.AddCountry(request);
+            List<CountryResponse> allCountries = _countryService.GetAllCountries();
 
             //Assert
             Assert.True(countryResponse.CountryID != Guid.Empty);
+            Assert.Contains(countryResponse, allCountries);
         }
+        #endregion
+        #region GetAllCountries Tests
+        //When Country list is empty, It will return a empty list
+        [Fact]
+        public void GetAllCountries_EmptyList()
+        {
+            //act
+            List<CountryResponse> actual_country_response_list = _countryService.GetAllCountries();
+
+            //assert
+            Assert.Empty(actual_country_response_list);
+        }
+
+        // When Country list is not empty, It will return a list of countries
+        [Fact]
+        public void GetAllCountryDetails_ListOfTheCountries()
+        {
+            //arrange
+            List<CountryResponse> country_list_while_adding_countries = new();
+            List<CountryResponse> country_list_while_calling_getAllCountries = new();
+            List<CountryAddRequest> countryAddRequests = new() 
+            {
+                new() {CountryName = "Bangladesh"},
+                new() {CountryName = "Pakistan"},
+                new() {CountryName = "Afganistan"}
+            };
+
+            //act
+            foreach (var countryRequest in countryAddRequests) 
+            {
+                country_list_while_adding_countries.Add(_countryService.AddCountry(countryRequest));
+            }
+            country_list_while_calling_getAllCountries = _countryService.GetAllCountries();
+
+            //assert
+            //Check if the country list while adding countries is same as the country list while calling GetAllCountries
+            foreach (var expected_country in country_list_while_adding_countries)
+            {
+                Assert.Contains(expected_country, country_list_while_calling_getAllCountries);
+            }
+        }
+        #endregion
     }
 }

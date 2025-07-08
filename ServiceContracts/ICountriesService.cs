@@ -14,5 +14,11 @@ namespace ServiceContracts
         /// <returns>Country object after adding it with country id</returns>
         CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
 
+        /// <summary>
+        /// By default, this method returns all countries in the list.
+        /// </summary>
+        /// <returns>All Countries in the list</returns>
+        List<CountryResponse> GetAllCountries();
+
     }
 }
