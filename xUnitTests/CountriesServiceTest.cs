@@ -132,5 +132,36 @@ namespace xUnitTests
             }
         }
         #endregion
+        #region GetCountryByCountryId Tests
+        //When CountryId is not found, it should return null
+        [Fact]
+        public void GetCountryByCountryId_NullCountryId()
+        {
+            // Arrange
+            Guid? countryId = null;
+
+            //Assert with Act
+            Assert.Null(_countryService.GetCountryByCountryId(countryId));
+        }
+
+        // When Appropriate CountryId is Found, it should return the appropriate Country
+        [Fact]
+        public void GetCountryByCountryId_CountryById()
+        {
+            //Arrange
+            CountryAddRequest countryAddRequest = new()
+            {
+                CountryName = "Bangladesh"
+            };
+            CountryResponse countryResponse = _countryService.AddCountry(countryAddRequest);
+
+            //Act
+            CountryResponse? countryById = _countryService.GetCountryByCountryId(countryResponse.CountryID);
+
+            //Assert
+            Assert.Equal(countryById, countryResponse);
+
+        }
+        #endregion
     }
 }
