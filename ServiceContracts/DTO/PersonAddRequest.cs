@@ -6,7 +6,7 @@ namespace ServiceContracts.DTO
     /// <summary>
     /// This DTO is used for inserting a new person
     /// </summary>
-    internal class PersonAddRequest
+    public class PersonAddRequest
     {
         public string? PersonName { get; set; }
         public string? Email { get; set; }
