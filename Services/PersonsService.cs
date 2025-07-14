@@ -4,7 +4,7 @@ using ServiceContracts.DTO;
 
 namespace Services
 {
-    internal class PersonsService : IPersonsService
+    public class PersonsService : IPersonsService
     {
 
         public PersonResponse AddPerson(PersonAddRequest? personAdd)
