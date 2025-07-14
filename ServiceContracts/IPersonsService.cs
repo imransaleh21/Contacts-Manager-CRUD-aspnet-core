@@ -13,7 +13,7 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="personAdd"></param>
         /// <returns> The same person details, along with newly generated personId</returns>
-        PersonResponse AddPerson(PersonAddRequest? personAdd);
+        PersonResponse AddPerson(PersonAddRequest? addPerson);
 
         /// <summary>
         /// By default, this method returns all persons in the list.
