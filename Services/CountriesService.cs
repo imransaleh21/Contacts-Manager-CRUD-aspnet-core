@@ -7,12 +7,10 @@ namespace Services
     public class CountriesService : ICountriesService
     {
         private readonly List<Country> _countries;
-        private readonly List<CountryResponse> _countriesResponse;
 
         public CountriesService()
         {
             _countries = new List<Country>();
-            _countriesResponse = new List<CountryResponse>();
         }
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
         {

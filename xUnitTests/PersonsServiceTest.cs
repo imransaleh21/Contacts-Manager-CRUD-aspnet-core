@@ -7,10 +7,19 @@ namespace xUnitTests
 {
     public class PersonsServiceTest
     {
-        public readonly IPersonsService _personsService;
+
+        private readonly ICountriesService _countriesService;
+        private readonly IPersonsService _personsService;
+
         public PersonsServiceTest()
         {
-            _personsService = new PersonsService();
+            /* As the PersonsService use DI Container to inject the CountriesService, but when we use xUnit tests,
+            we cannot use the the program.cs file DI Container, so we have to create the CountriesService object manually and
+            pass it to the PersonsService constructor.*/
+            /* In future, we can use a mocking framework like Moq to mock the CountriesService */
+
+            _countriesService = new CountriesService();
+            _personsService = new PersonsService(_countriesService);
         }
 
         #region AddPerson Tests
