@@ -53,7 +53,7 @@ namespace Services
             else
             {
                 Country? country = _countries.FirstOrDefault(country => country.CountryID == countryId);
-                return country.ToCountryResponse() ?? null;
+                return country?.ToCountryResponse() ?? null;
             }  
         }
     }
