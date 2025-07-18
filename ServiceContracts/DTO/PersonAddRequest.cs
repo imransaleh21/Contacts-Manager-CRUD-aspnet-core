@@ -11,17 +11,20 @@ namespace ServiceContracts.DTO
     /// </summary>
     public class PersonAddRequest
     {
-        [Required(ErrorMessage = "{1} is required")]
+        [Required(ErrorMessage = "{0} is required")]
         public string? PersonName { get; set; }
 
-        [Required(ErrorMessage = "{1} is required")]
+        [Required(ErrorMessage = "{0} is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string? Email { get; set; }
+
         [DateChecker]
         public DateTime? DateOfBirth { get; set; }
         public GenderOptions? Gender { get; set; }
         public Guid? CountryId { get; set; }
         public string? Address { get; set; }
+
+        [Required(ErrorMessage = "{0} is required")]
         public bool? ReceiveNewsLettter { get; set; }
 
         //Convert the PersonAddRequest Object to Person Object

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using Services.Helpers;
 
 namespace Services
 {
@@ -44,9 +46,8 @@ namespace Services
         public PersonResponse AddPerson(PersonAddRequest? addPerson)
         {
             if(addPerson == null) throw new ArgumentNullException(nameof(addPerson));
-            else if(addPerson.PersonName == null) throw new ArgumentException(nameof(addPerson.PersonName));
-            else if(addPerson.Email == null) throw new ArgumentException(nameof(addPerson.Email));
-            else if(addPerson.ReceiveNewsLettter == null) throw new ArgumentException(nameof(addPerson.ReceiveNewsLettter));
+            // Add model validation for any validation error
+            ValidationHelper.ValidateTheModelObject(addPerson);
 
             //Convert the PersonAddRequest DTO object into Person object then add it to the list of persons
             Person person = addPerson.ToPerson();
