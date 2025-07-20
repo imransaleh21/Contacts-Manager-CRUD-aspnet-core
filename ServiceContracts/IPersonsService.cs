@@ -21,5 +21,12 @@ namespace ServiceContracts
         /// <returns>Full list of the persons details of PersonResponse type</returns>
         List<PersonResponse> GetAllPersons();
 
+        /// <summary>
+        /// This method will get a personId and send the specific person's details
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>If the Id is valid then return the person's details otherwise send a proper message</returns>
+        PersonResponse? GetPersonByPersonId(Guid? id);
+
     }
 }

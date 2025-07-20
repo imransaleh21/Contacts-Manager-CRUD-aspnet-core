@@ -146,7 +146,7 @@ namespace xUnitTests
 
         // When Appropriate CountryId is Found, it should return the appropriate Country
         [Fact]
-        public void GetCountryByCountryId_CountryById()
+        public void GetCountryByCountryId_AppropriateCountryById()
         {
             //Arrange
             CountryAddRequest countryAddRequest = new()

@@ -103,5 +103,43 @@ namespace xUnitTests
 
         }
         #endregion
+        #region GetPersonByPersonId Tests
+        // when person id is null, it should return null
+        [Fact]
+        public void GetPersonByPersonId_NullPersonId()
+        {
+            //Arrange
+            Guid? PersonId = null;
+            //Assert with Act
+            Assert.Null(_personsService.GetPersonByPersonId(PersonId));
+
+        }
+
+        // Get Appropriate person if proper person id is provided
+        [Fact]
+        public void GetPersonByPersonId_AppropriatePersonById()
+        {
+            //Arrange
+            PersonAddRequest personAddRequest = new()
+            {
+                PersonName = "Muhammad",
+                Email = "muhammad@gmail.com",
+                DateOfBirth = DateTime.Parse("1996-02-21"),
+                Gender = GenderOptions.Male,
+                CountryId = Guid.NewGuid(),
+                Address = "Birol, Dinajpur",
+                ReceiveNewsLettter = false
+            };
+            PersonResponse personAddResponse = _personsService.AddPerson(personAddRequest); // Add a person with details
+            Guid personId = personAddResponse.PersonId; // get the person's personId
+
+            //Act
+            PersonResponse getPersonResponseById = _personsService.GetPersonByPersonId(personId); //get the specific person by it's id
+
+            //Assert
+            Assert.Equal(getPersonResponseById, personAddResponse);
+
+        }
+        #endregion
     }
 }

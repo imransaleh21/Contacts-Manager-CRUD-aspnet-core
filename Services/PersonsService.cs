@@ -66,5 +66,17 @@ namespace Services
         {
             return _persons.Select(person => person.ToPersonResponse()).ToList();
         }
+
+        /// <summary>
+        /// Send the person details of the corresponding person ID, if the id is null then return null
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Return person details</returns>
+        public PersonResponse? GetPersonByPersonId(Guid? id)
+        {
+            if(id == null) return null;
+            Person? person = _persons.FirstOrDefault(person => person.PersonId == id);
+            return person?.ToPersonResponse()??null;
+        }
     }
 }
