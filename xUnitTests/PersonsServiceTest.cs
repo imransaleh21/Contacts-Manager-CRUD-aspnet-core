@@ -141,5 +141,68 @@ namespace xUnitTests
 
         }
         #endregion
+        #region GetAllPersons Tests
+        //If the person list is empty then retun empty list
+        [Fact]
+        public void GetAllPersons_EmptyPersonList()
+        {
+            //Assert with Act
+            Assert.Empty(_personsService.GetAllPersons());
+
+        }
+
+        //Get all the person's details in the list
+        [Fact]
+        public void GetAllPersons_ListOfPersons()
+        {
+            //Arrange
+            List<PersonResponse> personResponsesWhileAdding = new();
+            List<PersonResponse> personResponsesWhileGettingAllPerson = new();
+            List<PersonAddRequest> personAddRequests = new()
+            {
+                new()
+                {
+                    PersonName = "Imran",
+                    Email = "imran@gmail.com",
+                    DateOfBirth = DateTime.Parse("2000-02-21"),
+                    Gender = GenderOptions.Male,
+                    CountryId = Guid.NewGuid(),
+                    Address = "Mohammadpur, Dhaka",
+                    ReceiveNewsLettter = true
+                },
+
+                new()
+                {
+                    PersonName = "Saleh",
+                    Email = "saleh@gmail.com",
+                    DateOfBirth = DateTime.Parse("1999-02-21"),
+                    Gender = GenderOptions.Male,
+                    CountryId = Guid.NewGuid(),
+                    Address = "Birol, Dinajpur",
+                    ReceiveNewsLettter = true
+                }
+
+            };
+
+            // Replace the foreach loop with a LINQ expression,
+            // LINQ is used here as we need to convert each PersonAddRequest to PersonResponse
+            personResponsesWhileAdding = personAddRequests
+                .Select(person => _personsService.AddPerson(person))
+                .ToList();
+
+            //Act
+            personResponsesWhileGettingAllPerson = _personsService.GetAllPersons();
+
+            //Assert
+            // here LINQ expression is not used,
+            // as we need to check if the personResponsesWhileAdding contains all the persons in personResponsesWhileGettingAllPerson
+            foreach (PersonResponse personResponse in personResponsesWhileAdding)
+            {
+                Assert.Contains(personResponse, personResponsesWhileGettingAllPerson);
+            }
+
+        }
+
+        #endregion
     }
 }
