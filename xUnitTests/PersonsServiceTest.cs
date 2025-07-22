@@ -2,6 +2,7 @@
 using ServiceContracts.DTO;
 using Services;
 using ServiceContracts.Enums;
+using Entities;
 
 namespace xUnitTests
 {
@@ -21,6 +22,68 @@ namespace xUnitTests
             _countriesService = new CountriesService();
             _personsService = new PersonsService(_countriesService);
         }
+
+        #region CreatePersonList
+        /// <summary>
+        /// This method creates a list of persons with some predefined data
+        /// before calling the AddPerson it adds some countries to the countries service to get the country id
+        /// </summary>
+        /// <returns> List of PersonResponse</returns>
+        internal List<PersonResponse> CreatePersonList()
+        {
+            // At first add some countries to the countries service to get the country id
+            CountryResponse countryResponse1 = _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Bangladesh" });
+            CountryResponse countryResponse2 = _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Pakistan" });
+            CountryResponse countryResponse3 = _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Afganisthan" });
+
+            List<PersonResponse> personResponsesWhileAdding = new();
+
+            // Add some persons to the persons service with the countries added above
+            List<PersonAddRequest> personAddRequests = new()
+            {
+                new()
+                {
+                    PersonName = "Imran Muhammad",
+                    Email = "imran@gmail.com",
+                    DateOfBirth = DateTime.Parse("2000-02-21"),
+                    Gender = GenderOptions.Male,
+                    CountryId = countryResponse1.CountryID,
+                    Address = "Mohammadpur, Dhaka",
+                    ReceiveNewsLettter = true
+                },
+
+                new()
+                {
+                    PersonName = "Emran Saleh",
+                    Email = "saleh@gmail.com",
+                    DateOfBirth = DateTime.Parse("1999-02-02"),
+                    Gender = GenderOptions.Male,
+                    CountryId = countryResponse2.CountryID,
+                    Address = "Birol, Dinajpur",
+                    ReceiveNewsLettter = true
+                },
+
+                new()
+                {
+                    PersonName = "Muhammad Khan",
+                    Email = "muhammad@gmail.com",
+                    DateOfBirth = DateTime.Parse("1998-09-11"),
+                    Gender = GenderOptions.Male,
+                    CountryId = countryResponse3.CountryID,
+                    Address = "Kabul",
+                    ReceiveNewsLettter = false
+                }
+
+            };
+
+            // Replace the foreach loop with a LINQ expression,
+            // LINQ is used here as we need to convert each PersonAddRequest to PersonResponse
+            personResponsesWhileAdding = personAddRequests
+                .Select(person => _personsService.AddPerson(person))
+                .ToList();
+            return personResponsesWhileAdding;
+        }
+        #endregion
 
         #region AddPerson Tests
         // If the request is null, then it should throw an ArgumentNullException.
@@ -156,39 +219,8 @@ namespace xUnitTests
         public void GetAllPersons_ListOfPersons()
         {
             //Arrange
-            List<PersonResponse> personResponsesWhileAdding = new();
             List<PersonResponse> personResponsesWhileGettingAllPerson = new();
-            List<PersonAddRequest> personAddRequests = new()
-            {
-                new()
-                {
-                    PersonName = "Imran",
-                    Email = "imran@gmail.com",
-                    DateOfBirth = DateTime.Parse("2000-02-21"),
-                    Gender = GenderOptions.Male,
-                    CountryId = Guid.NewGuid(),
-                    Address = "Mohammadpur, Dhaka",
-                    ReceiveNewsLettter = true
-                },
-
-                new()
-                {
-                    PersonName = "Saleh",
-                    Email = "saleh@gmail.com",
-                    DateOfBirth = DateTime.Parse("1999-02-21"),
-                    Gender = GenderOptions.Male,
-                    CountryId = Guid.NewGuid(),
-                    Address = "Birol, Dinajpur",
-                    ReceiveNewsLettter = true
-                }
-
-            };
-
-            // Replace the foreach loop with a LINQ expression,
-            // LINQ is used here as we need to convert each PersonAddRequest to PersonResponse
-            personResponsesWhileAdding = personAddRequests
-                .Select(person => _personsService.AddPerson(person))
-                .ToList();
+            List<PersonResponse> personResponsesWhileAdding = CreatePersonList(); // Create a list of persons
 
             //Act
             personResponsesWhileGettingAllPerson = _personsService.GetAllPersons();
@@ -201,6 +233,51 @@ namespace xUnitTests
                 Assert.Contains(personResponse, personResponsesWhileGettingAllPerson);
             }
 
+        }
+
+        #endregion
+        #region GetFilteredPersons Tests
+        //If the search text is Empty and the searchBy is PersonName, then it should return all persons
+        [Fact]
+        public void GetFilteredPersons_EmptySearchText()
+        {
+            //Arrange
+            List<PersonResponse>? filteredPersonResponse = new();
+            List<PersonResponse> personResponsesWhileAdding = CreatePersonList(); // Create a list of persons
+            //Act
+            filteredPersonResponse = _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
+
+            //Assert
+            // here LINQ expression is not used,
+            // as we need to check if the personResponsesWhileAdding contains all the persons in personResponsesWhileGettingAllPerson
+            foreach (PersonResponse personResponse in personResponsesWhileAdding)
+            {
+                Assert.Contains(personResponse, filteredPersonResponse);
+            }
+        }
+
+        //After adding some persons to the persons list, we will filter the persons by PersonName
+        //and some search text. If the search text is matching with the person name then it should return the filtered persons
+        [Fact]
+        public void GetFilteredPersons_ProperSearchTextForPersonName()
+        {
+            //Arrange
+            List<PersonResponse>? filteredPersonResponse = new();
+            List<PersonResponse> personResponsesWhileAdding = CreatePersonList(); // Create a list of persons
+            //Act
+            filteredPersonResponse = _personsService.GetFilteredPersons(nameof(Person.PersonName), "ha");
+
+            //Assert
+            // here LINQ expression is not used,
+            // as we need to check if the personResponsesWhileAdding contains all the persons in personResponsesWhileGettingAllPerson
+            foreach (PersonResponse personResponse in personResponsesWhileAdding)
+            {
+                if(personResponse.PersonName != null &&
+                    personResponse.PersonName.Contains("ha", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assert.Contains(personResponse, filteredPersonResponse);
+                }
+            }
         }
 
         #endregion

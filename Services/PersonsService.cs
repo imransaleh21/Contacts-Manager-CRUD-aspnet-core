@@ -78,5 +78,10 @@ namespace Services
             Person? person = _persons.FirstOrDefault(person => person.PersonId == id);
             return person?.ToPersonResponse()??null;
         }
+
+        public List<PersonResponse>? GetFilteredPersons(string searchBy, string? searchValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -28,5 +28,14 @@ namespace ServiceContracts
         /// <returns>If the Id is valid then return the person's details otherwise send a proper message</returns>
         PersonResponse? GetPersonByPersonId(Guid? id);
 
+        /// <summary>
+        /// This method will filter the persons based on the search criteria provided,
+        /// the field to search by and the value to search for.
+        /// </summary>
+        /// <param name="searchBy">Field to search</param>
+        /// <param name="searchValue">Value string for search</param>
+        /// <returns>the filtered persons list after filter with specific value string</returns>
+        List<PersonResponse>? GetFilteredPersons(string searchBy, string? searchValue);
+
     }
 }
