@@ -287,5 +287,8 @@ namespace xUnitTests
         #region UpdatePerson Tests
         // Will write unit tests for UpdatePerson method after implementing it in the PersonsService class
         #endregion
+        #region DeletePerson Tests
+        // will write unit tests for DeletePerson method after implementing it in the PersonsService class
+        #endregion
     }
 }

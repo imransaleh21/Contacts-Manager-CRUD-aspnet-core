@@ -1,5 +1,4 @@
 ﻿using ServiceContracts.DTO;
-using System;
 using ServiceContracts.Enums;
 
 namespace ServiceContracts
@@ -27,7 +26,7 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns>If the Id is valid then return the person's details otherwise send a proper message</returns>
-        PersonResponse? GetPersonByPersonId(Guid? id);
+        PersonResponse? GetPersonByPersonId(Guid? personId);
 
         /// <summary>
         /// This method will filter the persons based on the search criteria provided,
@@ -53,6 +52,13 @@ namespace ServiceContracts
         /// <param name="personUpdate">Person Details to be Updated</param>
         /// <returns>Updated person info</returns>
         PersonResponse UpdatePerson(PersonUpdateRequest? personUpdate);
+
+        /// <summary>
+        /// This method will delete a person based on the provided personId.
+        /// </summary>
+        /// <param name="personId">Person Id of the person who has to be deleted</param>
+        /// <returns>True if deletion is successful, otherwise false</returns>
+        bool DeletePerson(Guid? personId);
 
     }
 }

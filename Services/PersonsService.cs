@@ -1,7 +1,4 @@
-﻿using System;
-using System.Buffers;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
 using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -73,12 +70,12 @@ namespace Services
         /// <summary>
         /// Send the person details of the corresponding person ID, if the id is null then return null
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="personId"></param>
         /// <returns>Return person details</returns>
-        public PersonResponse? GetPersonByPersonId(Guid? id)
+        public PersonResponse? GetPersonByPersonId(Guid? personId)
         {
-            if(id == null) return null;
-            Person? person = _persons.FirstOrDefault(person => person.PersonId == id);
+            if(personId == null) return null;
+            Person? person = _persons.FirstOrDefault(person => person.PersonId == personId);
             return person?.ToPersonResponse()??null;
         }
 
@@ -258,6 +255,23 @@ namespace Services
             // Convert the person object to PersonResponse object and return
             return updatedPerson.ToPersonResponse();
 
+        }
+
+        /// <summary>
+        /// This method will delete a person based on the provided personId.
+        /// </summary>
+        /// <param name="personId">Person Id of the person who has to be deleted</param>
+        /// <returns>True if deletion is successful, otherwise false</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public bool DeletePerson(Guid? personId)
+        {
+            // Check if the personId is null
+            if (personId == null) throw new ArgumentNullException(nameof(personId));
+
+            Person? personToRemove = _persons.FirstOrDefault(person => person.PersonId == personId);
+            if (personToRemove == null) return false;
+            // If the person is found, remove it from the list of persons
+            return _persons.Remove(personToRemove);
         }
     }
 }
