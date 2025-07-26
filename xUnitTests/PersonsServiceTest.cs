@@ -284,5 +284,8 @@ namespace xUnitTests
         #region GetSortedPersons Tests
         // write unit test for GetSortedPersons method after implementing it in the PersonsService class
         #endregion
+        #region UpdatePerson Tests
+        // Will write unit tests for UpdatePerson method after implementing it in the PersonsService class
+        #endregion
     }
 }

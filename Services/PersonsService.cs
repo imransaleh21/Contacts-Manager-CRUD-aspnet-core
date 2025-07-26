@@ -230,9 +230,34 @@ namespace Services
                 return sortedPersonsList.ToList();
         }
 
-        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdate)
+        /// <summary>
+        /// This method will update the existing person details based on the provided update request.
+        /// </summary>
+        /// <param name="personUpdateRequest">Person Details to be Updated</param>
+        /// <returns>After updating the person based on updated info this function will return PersonResponse obj</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
         {
-            throw new NotImplementedException();
+            // check if the personUpdate is null
+            if (personUpdateRequest == null) throw new ArgumentNullException(nameof(personUpdateRequest));
+
+            // Add model validation for any validation error
+            ValidationHelper.ValidateTheModelObject(personUpdateRequest);
+
+            // Get the person details by Person ID that need to be updated 
+            PersonResponse? person = GetPersonByPersonId(personUpdateRequest.PersonId);
+            if (person == null) throw new ArgumentException("Invalid person id");
+
+            /*
+             * As person info is found(not null), So, person info of that person id is found,
+             * now we can update the Person info that person
+            */
+            Person updatedPerson = personUpdateRequest.ToPerson();
+
+            // Convert the person object to PersonResponse object and return
+            return updatedPerson.ToPersonResponse();
+
         }
     }
 }
