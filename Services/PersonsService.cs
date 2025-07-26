@@ -229,5 +229,10 @@ namespace Services
             }
                 return sortedPersonsList.ToList();
         }
+
+        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

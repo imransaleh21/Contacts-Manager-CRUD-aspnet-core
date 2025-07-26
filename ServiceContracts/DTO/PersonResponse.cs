@@ -1,5 +1,6 @@
 ﻿using Entities;
 using System;
+using ServiceContracts.Enums;
 
 namespace ServiceContracts.DTO
 {
@@ -54,6 +55,25 @@ namespace ServiceContracts.DTO
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        /// <summary>
+        /// Converts the current PersonResponse instance to a PersonUpdateRequest DTO.
+        /// </summary>
+        /// <returns></returns>
+        public PersonUpdateRequest ToPersonUpdateRequest()
+        {
+            return new PersonUpdateRequest
+            {
+                PersonId = PersonId,
+                PersonName = PersonName,
+                Email = Email,
+                DateOfBirth = DateOfBirth,
+                Gender = (GenderOptions?)Enum.Parse(typeof(GenderOptions), Gender, true),
+                CountryId = CountryId,
+                Address = Address,
+                ReceiveNewsLettter = ReceiveNewsLettter
+            };
         }
     }
 
