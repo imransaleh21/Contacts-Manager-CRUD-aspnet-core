@@ -9,7 +9,7 @@ namespace xUnitTests
         private readonly ICountriesService _countryService;
         public CountriesServiceTest()
         {
-            _countryService = new CountriesService();
+            _countryService = new CountriesService(false);
         }
 
         #region AddCountry Tests

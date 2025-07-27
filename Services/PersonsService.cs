@@ -12,10 +12,79 @@ namespace Services
         private readonly ICountriesService _countriesService;
         private readonly List<Person> _persons;
 
-        public PersonsService(ICountriesService countriesService)
+        public PersonsService(
+            ICountriesService countriesService,
+            bool mockData = true
+            )
         {
             _countriesService = countriesService;
             _persons = new List<Person>();
+
+            if (mockData)
+            {
+                //Adding mock data for testing purposes. When we add EF Core later, we will remove this.
+                _persons.Add(new Person()
+                {
+                    PersonId = Guid.Parse("08E292D8-0B53-4ECD-8658-CA1967213886"),
+                    PersonName = "Imran Islam",
+                    Email = "imran@gmail.com",
+                    DateOfBirth = DateTime.Parse("2000-02-21"),
+                    Gender = (GenderOptions.Male).ToString(),
+                    CountryId = Guid.Parse("C011C5AE-9633-47ED-8B8D-1FDC330767C5"),
+                    Address = "Mohammadpur, Dhaka",
+                    ReceiveNewsLettter = true
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonId = Guid.Parse("A234B9FE-433C-4245-A305-19ED63512EB8"),
+                    PersonName = "Emran Saleh",
+                    Email = "saleh@gmail.com",
+                    DateOfBirth = DateTime.Parse("1999-02-02"),
+                    Gender = (GenderOptions.Male).ToString(),
+                    CountryId = Guid.Parse("F86235E7-A65D-45BD-8B49-9478FFF80C33"),
+                    Address = "Birol, Dinajpur",
+                    ReceiveNewsLettter = false
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonId = Guid.Parse("2A5562AA-1056-448A-AB2E-79E86B0D40AF"),
+                    PersonName = "Muhammad Khan",
+                    Email = "muhammad@gmail.com",
+                    DateOfBirth = DateTime.Parse("1998-09-11"),
+                    Gender = (GenderOptions.Male).ToString(),
+                    CountryId = Guid.Parse("A0F1B2C3-D4E5-6789-ABCD-EF0123456789"),
+                    Address = "Kabul",
+                    ReceiveNewsLettter = true
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonId = Guid.Parse("9D2870CC-CF83-48F3-AB24-0BFF12FCF9F1"),
+                    PersonName = "Sara Khan",
+                    Email = "khan@gmail.com",
+                    DateOfBirth = DateTime.Parse("2000-06-28"),
+                    Gender = (GenderOptions.Female).ToString(),
+                    CountryId = Guid.Parse("9AF86740-0EB0-4EE0-9087-E888C57DCD39"),
+                    Address = "Istambul",
+                    ReceiveNewsLettter = false
+                });
+
+                _persons.Add(new Person()
+                {
+                    PersonId = Guid.Parse("4A76D2CD-21DB-4388-9D98-FEF35E712146"),
+                    PersonName = "Mahfuza Parvin",
+                    Email = "parvin@gmail.com",
+                    DateOfBirth = DateTime.Parse("1982-09-09"),
+                    Gender = (GenderOptions.Female).ToString(),
+                    CountryId = Guid.Parse("A171E94A-C261-4B8E-9148-BBEC92C7CC71"),
+                    Address = "ababil",
+                    ReceiveNewsLettter = true
+                });
+
+
+            }
         }
 
         /// <summary>

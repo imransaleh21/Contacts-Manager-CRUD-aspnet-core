@@ -19,8 +19,8 @@ namespace xUnitTests
             pass it to the PersonsService constructor.*/
             /* In future, we can use a mocking framework like Moq to mock the CountriesService */
 
-            _countriesService = new CountriesService();
-            _personsService = new PersonsService(_countriesService);
+            _countriesService = new CountriesService(false);
+            _personsService = new PersonsService(_countriesService, false);
         }
 
         #region CreatePersonList
