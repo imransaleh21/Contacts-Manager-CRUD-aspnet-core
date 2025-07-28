@@ -27,7 +27,7 @@ namespace Services
                 _countries.Add(new Country
                 {
                     CountryID = Guid.Parse("A0F1B2C3-D4E5-6789-ABCD-EF0123456789"),
-                    CountryName = "saudi Arabia"
+                    CountryName = "Saudi Arabia"
                 });
                 _countries.Add(new Country
                 {

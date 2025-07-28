@@ -133,7 +133,7 @@ namespace Services
         /// <returns>PersonResponse details</returns>
         public List<PersonResponse> GetAllPersons()
         {
-            return _persons.Select(person => person.ToPersonResponse()).ToList();
+            return _persons.Select(person => PersonToPersonResponseWithCountry(person)).ToList();
         }
 
         /// <summary>
