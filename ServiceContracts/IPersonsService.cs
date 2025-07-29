@@ -35,7 +35,7 @@ namespace ServiceContracts
         /// <param name="searchBy">Field to search</param>
         /// <param name="searchValue">Value string for search</param>
         /// <returns>the filtered persons list after filter with specific value string</returns>
-        List<PersonResponse>? GetFilteredPersons(string searchBy, string? searchValue);
+        List<PersonResponse> GetFilteredPersons(string searchBy, string? searchValue);
 
         /// <summary>
         /// This method will sort the persons based on the sort criteria provided,

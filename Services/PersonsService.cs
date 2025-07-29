@@ -155,7 +155,7 @@ namespace Services
         /// <param name="searchBy"></param>
         /// <param name="searchValue"></param>
         /// <returns>It return the list of PersonResponse</returns>
-        public List<PersonResponse>? GetFilteredPersons(string searchBy, string? searchValue)
+        public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchValue)
         {
             List<PersonResponse> allPersons = GetAllPersons();
             List<PersonResponse> matchingPersons = allPersons;
@@ -165,27 +165,27 @@ namespace Services
 
             switch (searchBy)
             {
-                case nameof(Person.PersonName):
+                case nameof(PersonResponse.PersonName):
                     matchingPersons = allPersons.Where(person => (!string.IsNullOrEmpty(person.PersonName)) ?
                     person.PersonName.Contains(searchValue, StringComparison.OrdinalIgnoreCase): true).ToList();
                     break;
-                case nameof(Person.Email):
+                case nameof(PersonResponse.Email):
                     matchingPersons = allPersons.Where(person => (!string.IsNullOrEmpty(person.Email)) ?
                     person.Email.Contains(searchValue, StringComparison.OrdinalIgnoreCase) : true).ToList();
                     break;
-                case nameof(Person.DateOfBirth):
+                case nameof(PersonResponse.DateOfBirth):
                     matchingPersons = allPersons.Where(person => (person.DateOfBirth != null) ?
                     person.DateOfBirth.Value.ToString("dd MMMM yyyy").Contains(searchValue, StringComparison.OrdinalIgnoreCase) : true).ToList();
                     break;
-                case nameof(Person.Gender):
+                case nameof(PersonResponse.Gender):
                     matchingPersons = allPersons.Where(person => (!string.IsNullOrEmpty(person.Gender)) ?
                     person.Gender.Contains(searchValue, StringComparison.OrdinalIgnoreCase) : true).ToList();
                     break;
-                case nameof(Person.CountryId):
+                case nameof(PersonResponse.CountryId):
                     matchingPersons = allPersons.Where(person => (!string.IsNullOrEmpty(person.Country)) ?
                     person.Country.Contains(searchValue, StringComparison.OrdinalIgnoreCase) : true).ToList();
                     break;
-                case nameof(Person.Address):
+                case nameof(PersonResponse.Address):
                     matchingPersons = allPersons.Where(person => (!string.IsNullOrEmpty(person.Address)) ?
                     person.Address.Contains(searchValue, StringComparison.OrdinalIgnoreCase) : true).ToList();
                     break;

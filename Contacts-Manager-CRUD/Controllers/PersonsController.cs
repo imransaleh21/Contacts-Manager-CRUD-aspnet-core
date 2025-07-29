@@ -29,7 +29,15 @@ namespace Contacts_Manager_CRUD.Controllers
                 { nameof(PersonResponse.Address), "Address"}
             };
             // Retrieve all persons from the service
-            List<PersonResponse> persons = _personsService.GetAllPersons();
+            // as filtered person method returns all persons if no search criteria is provided
+            // so this code is now commented
+            //List<PersonResponse> allPersons = _personsService.GetAllPersons(); 
+
+            // based on the search criteria, filtered persons will be returned
+            // and if no search criteria is provided, all persons will be returned
+            List<PersonResponse> persons = _personsService.GetFilteredPersons(searchBy, searchValue);
+            ViewBag.CurrentSearchBy = searchBy;
+            ViewBag.CurrentSearchValue = searchValue;
             return View(persons); // Return the view with the list of persons at Views/Persons/Index.cshtml
         }
     }

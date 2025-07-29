@@ -12,13 +12,24 @@
         <select class="form-input" name="searchBy">
             @foreach (var field in ViewBag.SearchField)
             {
-                <option value="@field.Key">@field.Value</option>
+                    @* Check if the current field is the one selected for searching *@
+                if(field.Key == ViewBag.CurrentSearchBy)
+                {
+                        <option value="@field.Key" selected="@ViewBag.CurrentSearchBy">@field.Value</option>
+                }
+                    @* If not selected, just display the option *@
+                else
+                {
+                    <option value="@field.Key">@field.Value</option>
+                }
             }
         </select>
     </div>
 
     <div class="flex-1">
-        <input type="search" id="Search" name="searchValue" class="form-input" placeholder="Search"/>
+            @* Input for search value, with the current search value always filed *@
+            <input type="search" id="Search" name="searchValue" value="@ViewBag.CurrentSearchValue" 
+            class="form-input" placeholder="Search" />
     </div>
 
     <div class="flex-1">
@@ -35,6 +46,7 @@
             <th>Email</th>
             <th>Date of Birth</th>
             <th>Age</th>
+            <th>Gender</th>
             <th>Country</th>
             <th>Address</th>
             <th>Receive News Letters</th>
@@ -48,6 +60,7 @@
                 <td>@person.Email</td>
                 <td>@person.DateOfBirth?.ToString("dd MMMM yyyy")</td>
                 <td>@person.Age</td>
+                <td>@person.Gender</td>
                 <td>@person.Country</td>
                 <td>@person.Address</td>
                 <td>@person.ReceiveNewsLettter</td>
