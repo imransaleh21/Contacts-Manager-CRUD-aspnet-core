@@ -2,8 +2,32 @@
 @{
     ViewBag.Title = "Persons";
 }
+<form action="~/persons/index" method="get"> 
 <h1>Persons</h1>
 
+<div class="box flex">
+    @* Search/filter section: dropdown for search field, search input, search button, and clear link *@
+    <div class="flex-1">
+        @*Eg: searchBy=Email&searchValue=im; send by the URL*@
+        <select class="form-input" name="searchBy">
+            @foreach (var field in ViewBag.SearchField)
+            {
+                <option value="@field.Key">@field.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="flex-1">
+        <input type="search" id="Search" name="searchValue" class="form-input" placeholder="Search"/>
+    </div>
+
+    <div class="flex-1">
+        <button class="button button-blue-back">Search</button>
+        <a href="~/persons/index" class="link-hover">Clear all</a>
+    </div>
+</div>
+
+@* This table will show the list of person view *@
 <table class="table w-100 mt">
     <thead>
         <tr>
@@ -31,3 +55,4 @@
         }
     </tbody>
 </table>
+</form>
