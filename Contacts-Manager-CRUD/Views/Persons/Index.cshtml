@@ -42,7 +42,38 @@
 <table class="table w-100 mt">
     <thead>
         <tr>
-            <th>Name</th>
+                @* Sorting by Name *@
+            @if (ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) &&
+                ViewBag.CurrentSortOrder == SortOrderOptions.ASC)
+                {
+                    <th>
+                        <a href="~/persons/index?
+    searchBy=@ViewBag.CurrentSearchBy&searchValue=@ViewBag.CurrentSearchValue
+    &sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@SortOrderOptions.DESC">Name</a>
+                        <i class="fa-solid fa-sort-up"></i>
+                    </th>
+                }
+            else if (ViewBag.CurrentSortBy == nameof(PersonResponse.PersonName) &&
+                    ViewBag.CurrentSortOrder == SortOrderOptions.DESC)
+                {
+                    <th>
+                        <a href="~/persons/index?
+    searchBy=@ViewBag.CurrentSearchBy&searchValue=@ViewBag.CurrentSearchValue
+    &sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@SortOrderOptions.ASC">Name</a>
+                        <i class="fa-solid fa-sort-down"></i>
+                    </th>
+                }
+            else
+                {
+                    <th>
+                        <a href="~/persons/index?
+    searchBy=@ViewBag.CurrentSearchBy&searchValue=@ViewBag.CurrentSearchValue
+    &sortBy=@nameof(PersonResponse.PersonName)&sortOrder=@ViewBag.CurrentSortOrder">Name</a>
+                    </th>
+                }
+
+                @* Sorting by Email *@
+
             <th>Email</th>
             <th>Date of Birth</th>
             <th>Age</th>
