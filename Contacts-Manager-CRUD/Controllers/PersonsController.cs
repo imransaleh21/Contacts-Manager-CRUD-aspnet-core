@@ -8,9 +8,12 @@ namespace Contacts_Manager_CRUD.Controllers
     public class PersonsController : Controller
     {
         private readonly IPersonsService _personsService;
-        public PersonsController(IPersonsService personsService)
+        private readonly ICountriesService _countriesService;
+        public PersonsController(IPersonsService personsService,
+            ICountriesService countriesService)
         {
             _personsService = personsService;
+            _countriesService = countriesService;
         }
         /// <summary>
         /// Index action method for the PersonsController.
@@ -47,6 +50,15 @@ namespace Contacts_Manager_CRUD.Controllers
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrder;
             return View(sortedPersons); // Return the view with the list of persons at Views/Persons/Index.cshtml
+        }
+
+        [Route("persons/create")]
+        public IActionResult Create()
+        {
+            // This action method is used to render the Create view for adding a new person
+            List<CountryResponse> countryList = _countriesService.GetAllCountries();
+            ViewBag.Countries = countryList;
+            return View();
         }
     }
 }
