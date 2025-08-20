@@ -23,8 +23,6 @@ namespace ServiceContracts.DTO
         public GenderOptions? Gender { get; set; }
         public Guid? CountryId { get; set; }
         public string? Address { get; set; }
-
-        [Required(ErrorMessage = "{0} is required")]
         public bool? ReceiveNewsLettter { get; set; }
 
         //Convert the PersonAddRequest Object to Person Object

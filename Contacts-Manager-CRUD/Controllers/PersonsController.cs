@@ -37,7 +37,8 @@ namespace Contacts_Manager_CRUD.Controllers
             // Retrieve all persons from the service
             // as filtered person method returns all persons if no search criteria is provided
             // so this code is now commented
-            //List<PersonResponse> allPersons = _personsService.GetAllPersons(); 
+            List<PersonResponse> allPersons = _personsService.GetAllPersons();
+            return View(allPersons);
 
             // based on the search criteria, filtered persons will be returned
             // and if no search criteria is provided, all persons will be returned
@@ -52,7 +53,13 @@ namespace Contacts_Manager_CRUD.Controllers
             return View(sortedPersons); // Return the view with the list of persons at Views/Persons/Index.cshtml
         }
 
+        #region Get & Post Methods for Create Person
+        /// <summary>
+        /// This action method is used to render the Create view for adding a new person. So, GET method is used.
+        /// </summary>
+        /// <returns></returns>
         [Route("persons/create")]
+        [HttpGet]
         public IActionResult Create()
         {
             // This action method is used to render the Create view for adding a new person
@@ -60,5 +67,31 @@ namespace Contacts_Manager_CRUD.Controllers
             ViewBag.Countries = countryList;
             return View();
         }
+
+        /// <summary>
+        /// This action method is used to handle the form submission for creating a new person. So, POST method is used.
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
+        [Route("persons/create")]
+        [HttpPost]
+        public IActionResult Create(PersonAddRequest person)
+        {
+            // This action method is used to handle the form submission for creating a new person
+            if (!ModelState.IsValid)
+            {
+                List<CountryResponse> countryList = _countriesService.GetAllCountries();
+                ViewBag.Countries = countryList;
+                ViewBag.Errors = ModelState.Values.SelectMany(error =>  error.Errors)
+                    .Select(errorMessages => errorMessages.ErrorMessage).ToList();
+                return View();
+            }
+
+            // If the model state is valid, add the person using the service
+            PersonResponse newPerson = _personsService.AddPerson(person);
+            // After adding the person, redirect to the Index action method to display the updated list of persons
+            return RedirectToAction("Index", "Persons");
+        }
+        #endregion
     }
 }
