@@ -96,10 +96,12 @@
                 @if(ViewBag.Errors != null)
                 {
                     <div class="text-red ml">
-                        @foreach(string error in ViewBag.Errors)
-                        {
-                            <span>@error</span><br />
-                        }
+                        <ul>
+                            @foreach(string error in ViewBag.Errors)
+                            {
+                                    <li><span class="ml">@error</span></li>
+                            }
+                        </ul>
                     </div>
                 }
             </div>

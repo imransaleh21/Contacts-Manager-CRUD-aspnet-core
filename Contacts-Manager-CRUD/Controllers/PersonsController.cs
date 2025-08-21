@@ -5,6 +5,8 @@ using ServiceContracts.Enums;
 
 namespace Contacts_Manager_CRUD.Controllers
 {
+    [Route("[controller]")] // This is as same as [Route("persons")]
+    //[Route("persons")]
     public class PersonsController : Controller
     {
         private readonly IPersonsService _personsService;
@@ -16,10 +18,11 @@ namespace Contacts_Manager_CRUD.Controllers
             _countriesService = countriesService;
         }
         /// <summary>
-        /// Index action method for the PersonsController.
+        /// Index action method for the PersonsController. 
         /// </summary>
         /// <returns></returns>
-        [Route("persons/index")]
+        [Route("[action]")] // This route is work same as the below one
+        //[Route("index")]
         [Route("/")]
         public IActionResult Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
@@ -58,7 +61,7 @@ namespace Contacts_Manager_CRUD.Controllers
         /// This action method is used to render the Create view for adding a new person. So, GET method is used.
         /// </summary>
         /// <returns></returns>
-        [Route("persons/create")]
+        [Route("create")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -73,7 +76,7 @@ namespace Contacts_Manager_CRUD.Controllers
         /// </summary>
         /// <param name="person"></param>
         /// <returns></returns>
-        [Route("persons/create")]
+        [Route("create")]
         [HttpPost]
         public IActionResult Create(PersonAddRequest person)
         {
