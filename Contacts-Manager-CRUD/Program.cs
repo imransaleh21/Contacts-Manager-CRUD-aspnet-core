@@ -12,9 +12,8 @@ builder.Services.AddSingleton<IPersonsService, PersonsService>();
 // Registering DbContext with SQL Server
 builder.Services.AddDbContext<PersonsDbContext>
     (options =>{
-        options.UseSqlServer();
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); // Connection string from appsettings.json
     });
-
 
 var app = builder.Build();
 
