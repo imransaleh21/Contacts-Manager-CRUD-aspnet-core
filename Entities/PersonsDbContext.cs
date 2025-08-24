@@ -3,6 +3,9 @@ namespace Entities
 {
     public class PersonsDbContext : DbContext
     {
+        public PersonsDbContext(DbContextOptions options) : base(options)
+        {
+        }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Person> Persons { get; set; }
 
@@ -39,6 +42,7 @@ namespace Entities
             List<Person>? persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson);
             foreach(Person person in persons)
             {
+                //person.PersonId = Guid.NewGuid(); // Ensure each person has a unique ID
                 modelBuilder.Entity<Person>().HasData(person);
             }
 
