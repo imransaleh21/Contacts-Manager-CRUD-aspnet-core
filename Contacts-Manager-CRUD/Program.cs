@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 // Registering services for dependency injection
-builder.Services.AddSingleton<ICountriesService, CountriesService>();
-builder.Services.AddSingleton<IPersonsService, PersonsService>();
+builder.Services.AddScoped<ICountriesService, CountriesService>();
+builder.Services.AddScoped<IPersonsService, PersonsService>();
 
 // Registering DbContext with SQL Server
 builder.Services.AddDbContext<PersonsDbContext>

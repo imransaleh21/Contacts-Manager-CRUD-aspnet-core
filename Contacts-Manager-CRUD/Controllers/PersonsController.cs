@@ -40,8 +40,8 @@ namespace Contacts_Manager_CRUD.Controllers
             // Retrieve all persons from the service
             // as filtered person method returns all persons if no search criteria is provided
             // so this code is now commented
-            List<PersonResponse> allPersons = _personsService.GetAllPersons();
-            return View(allPersons);
+            //List<PersonResponse> allPersons = _personsService.GetAllPersons();
+            //return View(allPersons);
 
             // based on the search criteria, filtered persons will be returned
             // and if no search criteria is provided, all persons will be returned

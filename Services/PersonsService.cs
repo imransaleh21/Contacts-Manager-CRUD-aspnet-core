@@ -10,81 +10,15 @@ namespace Services
     public class PersonsService : IPersonsService
     {
         private readonly ICountriesService _countriesService;
-        private readonly List<Person> _persons;
+        private readonly PersonsDbContext _db;
 
         public PersonsService(
-            ICountriesService countriesService,
-            bool mockData = true
+            PersonsDbContext dbContext,
+            ICountriesService countriesService
             )
         {
             _countriesService = countriesService;
-            _persons = new List<Person>();
-
-            if (mockData)
-            {
-                //Adding mock data for testing purposes. When we add EF Core later, we will remove this.
-                _persons.Add(new Person()
-                {
-                    PersonId = Guid.Parse("08E292D8-0B53-4ECD-8658-CA1967213886"),
-                    PersonName = "Imran Islam",
-                    Email = "imran@gmail.com",
-                    DateOfBirth = DateTime.Parse("2000-02-21"),
-                    Gender = (GenderOptions.Male).ToString(),
-                    CountryId = Guid.Parse("C011C5AE-9633-47ED-8B8D-1FDC330767C5"),
-                    Address = "Mohammadpur, Dhaka",
-                    ReceiveNewsLettter = true
-                });
-
-                _persons.Add(new Person()
-                {
-                    PersonId = Guid.Parse("A234B9FE-433C-4245-A305-19ED63512EB8"),
-                    PersonName = "Emran Saleh",
-                    Email = "saleh@gmail.com",
-                    DateOfBirth = DateTime.Parse("1999-02-02"),
-                    Gender = (GenderOptions.Male).ToString(),
-                    CountryId = Guid.Parse("F86235E7-A65D-45BD-8B49-9478FFF80C33"),
-                    Address = "Birol, Dinajpur",
-                    ReceiveNewsLettter = false
-                });
-
-                _persons.Add(new Person()
-                {
-                    PersonId = Guid.Parse("2A5562AA-1056-448A-AB2E-79E86B0D40AF"),
-                    PersonName = "Muhammad Khan",
-                    Email = "muhammad@gmail.com",
-                    DateOfBirth = DateTime.Parse("1998-09-11"),
-                    Gender = (GenderOptions.Male).ToString(),
-                    CountryId = Guid.Parse("A0F1B2C3-D4E5-6789-ABCD-EF0123456789"),
-                    Address = "Kabul",
-                    ReceiveNewsLettter = true
-                });
-
-                _persons.Add(new Person()
-                {
-                    PersonId = Guid.Parse("9D2870CC-CF83-48F3-AB24-0BFF12FCF9F1"),
-                    PersonName = "Sara Khan",
-                    Email = "khan@gmail.com",
-                    DateOfBirth = DateTime.Parse("2000-06-28"),
-                    Gender = (GenderOptions.Female).ToString(),
-                    CountryId = Guid.Parse("9AF86740-0EB0-4EE0-9087-E888C57DCD39"),
-                    Address = "Istambul",
-                    ReceiveNewsLettter = false
-                });
-
-                _persons.Add(new Person()
-                {
-                    PersonId = Guid.Parse("4A76D2CD-21DB-4388-9D98-FEF35E712146"),
-                    PersonName = "Mahfuza Parvin",
-                    Email = "parvin@gmail.com",
-                    DateOfBirth = DateTime.Parse("1982-09-09"),
-                    Gender = (GenderOptions.Female).ToString(),
-                    CountryId = Guid.Parse("A171E94A-C261-4B8E-9148-BBEC92C7CC71"),
-                    Address = "ababil",
-                    ReceiveNewsLettter = true
-                });
-
-
-            }
+            _db = dbContext;
         }
 
         /// <summary>
@@ -121,7 +55,10 @@ namespace Services
             //Convert the PersonAddRequest DTO object into Person object then add it to the list of persons
             Person person = addPerson.ToPerson();
             person.PersonId = Guid.NewGuid();
-            _persons.Add(person);
+
+            // Add the person to the Persons DbSet and save changes
+            _db.Persons.Add(person);
+            _db.SaveChanges();
 
             //Now convert the person object into Person Response DTO type and fetch the country name if available
             return PersonToPersonResponseWithCountry(person);
@@ -133,7 +70,8 @@ namespace Services
         /// <returns>PersonResponse details</returns>
         public List<PersonResponse> GetAllPersons()
         {
-            return _persons.Select(person => PersonToPersonResponseWithCountry(person)).ToList();
+            return _db.Persons.ToList()
+                .Select(person => PersonToPersonResponseWithCountry(person)).ToList();
         }
 
         /// <summary>
@@ -144,7 +82,9 @@ namespace Services
         public PersonResponse? GetPersonByPersonId(Guid? personId)
         {
             if(personId == null) return null;
-            Person? person = _persons.FirstOrDefault(person => person.PersonId == personId);
+            Person? person = _db.Persons
+                .FirstOrDefault(person => person.PersonId == personId);
+
             return person?.ToPersonResponse()??null;
         }
 
@@ -312,17 +252,30 @@ namespace Services
             ValidationHelper.ValidateTheModelObject(personUpdateRequest);
 
             // Get the person details by Person ID that need to be updated 
-            PersonResponse? person = GetPersonByPersonId(personUpdateRequest.PersonId);
-            if (person == null) throw new ArgumentException("Invalid person id");
+            Person? matchedPerson = _db.Persons
+                .FirstOrDefault(person => person.PersonId == personUpdateRequest.PersonId);
+            if (matchedPerson == null) throw new ArgumentException("Invalid person id");
 
             /*
              * As person info is found(not null), So, person info of that person id is found,
              * now we can update the Person info that person
+             * here as matchedPerson is already being tracked by EF Core,
+             * so no need to call _db.Persons.Update(matchedPerson) method
             */
-            Person updatedPerson = personUpdateRequest.ToPerson();
+            matchedPerson.PersonName = personUpdateRequest.PersonName;
+            matchedPerson.Email = personUpdateRequest.Email;
+            matchedPerson.DateOfBirth= personUpdateRequest.DateOfBirth;
+            matchedPerson.Gender = personUpdateRequest.Gender.ToString();
+            matchedPerson.CountryId = personUpdateRequest.CountryId;
+            matchedPerson.Address = personUpdateRequest.Address;
+            matchedPerson.ReceiveNewsLettter = personUpdateRequest.ReceiveNewsLettter;
+
+            // Update the person details in the Persons DbSet and save changes
+            _db.SaveChanges();
+
 
             // Convert the person object to PersonResponse object and return
-            return updatedPerson.ToPersonResponse();
+            return matchedPerson.ToPersonResponse();
 
         }
 
@@ -337,10 +290,13 @@ namespace Services
             // Check if the personId is null
             if (personId == null) throw new ArgumentNullException(nameof(personId));
 
-            Person? personToRemove = _persons.FirstOrDefault(person => person.PersonId == personId);
+            Person? personToRemove = _db.Persons.FirstOrDefault(person => person.PersonId == personId);
             if (personToRemove == null) return false;
+
             // If the person is found, remove it from the list of persons
-            return _persons.Remove(personToRemove);
+            _db.Persons.Remove(personToRemove);
+            _db.SaveChanges();
+            return true;
         }
     }
 }
