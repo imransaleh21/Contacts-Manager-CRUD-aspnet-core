@@ -1,8 +1,9 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using Microsoft.EntityFrameworkCore;
+using ServiceContracts;
 using ServiceContracts.DTO;
-using Services;
 using ServiceContracts.Enums;
-using Entities;
+using Services;
 
 namespace xUnitTests
 {
@@ -19,8 +20,11 @@ namespace xUnitTests
             pass it to the PersonsService constructor.*/
             /* In future, we can use a mocking framework like Moq to mock the CountriesService */
 
-            _countriesService = new CountriesService(false);
-            _personsService = new PersonsService(_countriesService, false);
+            _countriesService = new CountriesService(
+                new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
+
+            _personsService = new PersonsService(
+                new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options), _countriesService);
         }
 
         #region CreatePersonList

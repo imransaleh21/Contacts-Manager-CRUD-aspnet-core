@@ -70,7 +70,12 @@ namespace Services
         /// <returns>PersonResponse details</returns>
         public List<PersonResponse> GetAllPersons()
         {
-            return _db.Persons.ToList()
+            /*return _db.Persons.ToList()
+                .Select(person => PersonToPersonResponseWithCountry(person)).ToList();*/
+
+            // Using stored procedure to get all persons,
+            // now we don't need to call .ToList() to make list on memory every time
+            return _db.sp_GetAllPersons()
                 .Select(person => PersonToPersonResponseWithCountry(person)).ToList();
         }
 

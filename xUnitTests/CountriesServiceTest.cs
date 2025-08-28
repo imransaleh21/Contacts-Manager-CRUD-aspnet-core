@@ -1,3 +1,5 @@
+using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
@@ -9,7 +11,8 @@ namespace xUnitTests
         private readonly ICountriesService _countryService;
         public CountriesServiceTest()
         {
-            _countryService = new CountriesService(false);
+            _countryService = new CountriesService(
+                new PersonsDbContext( new DbContextOptionsBuilder<PersonsDbContext>().Options));
         }
 
         #region AddCountry Tests
