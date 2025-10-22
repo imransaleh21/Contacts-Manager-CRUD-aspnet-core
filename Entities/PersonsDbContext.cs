@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 namespace Entities
 {
     public class PersonsDbContext : DbContext
@@ -23,7 +24,7 @@ namespace Entities
 
             // Seed initial data for Countries
 
-            // we can seed data one by one like this or
+            // we can seed data one by one like this
             //modelBuilder.Entity<Country>().HasData(
             //    new Country { CountryID = Guid.NewGuid(), CountryName = "United States" },
             //);
@@ -48,9 +49,32 @@ namespace Entities
 
         }
 
+        /// <summary>
+        /// Stored procedure to get all persons
+        /// </summary>
+        /// <returns></returns>
         public List<Person> sp_GetAllPersons()
         {
             return Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToList();
+        }
+
+        public int sp_InsertPerson(Person person)
+        {
+            SqlParameter[] sqlParameters = new SqlParameter[]
+            {
+                new SqlParameter("@PersonId", person.PersonId),
+                new SqlParameter("@PersonName", person.PersonName ?? (object)DBNull.Value),
+                new SqlParameter("@Email", person.Email ?? (object)DBNull.Value),
+                new SqlParameter("@DateOfBirth", person.DateOfBirth ?? (object)DBNull.Value),
+                new SqlParameter("@Gender ", person.Gender ?? (object)DBNull.Value),
+                new SqlParameter("@CountryId", person.CountryId ?? (object)DBNull.Value),
+                new SqlParameter("@Address", person.Address ?? (object)DBNull.Value),
+                new SqlParameter("@ReceiveNewsLettter", person.ReceiveNewsLettter ?? (object)DBNull.Value)
+            };
+
+            return Database.ExecuteSqlRaw("EXECUTE [dbo].[InsertPerson] " +
+                "@PersonId, @PersonName, @Email, @DateOfBirth, @Gender, @CountryId," +
+                " @Address, @ReceiveNewsLettter", sqlParameters);
         }
     }
 }
