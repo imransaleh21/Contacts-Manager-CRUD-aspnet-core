@@ -20,7 +20,11 @@ namespace Entities
             base.OnModelCreating(modelBuilder); // Call the base method to ensure any base configurations are applied
             // Configure the table names for the entities
             modelBuilder.Entity<Country>().ToTable("Countries");
-            modelBuilder.Entity<Person>().ToTable("Persons");
+            modelBuilder.Entity<Person>().ToTable("Persons", t =>
+            {
+                // Fluent Api to add check constraint on PIN column of Persons table
+                t.HasCheckConstraint("CHK_PIN", "len([PIN]) = 4");
+            });
 
             // Seed initial data for Countries
 
@@ -29,9 +33,9 @@ namespace Entities
             //    new Country { CountryID = Guid.NewGuid(), CountryName = "United States" },
             //);
 
-           // Or, also we can use a collection(like json array) to seed multiple records at once
-           // like below uncommented code
-           string countriesJson = System.IO.File.ReadAllText("countries.json");
+            // Or, also we can use a collection(like json array) to seed multiple records at once
+            // like below uncommented code
+            string countriesJson = System.IO.File.ReadAllText("countries.json");
            List<Country>? countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson);
             foreach(Country country in countries)
             {
@@ -47,6 +51,12 @@ namespace Entities
                 modelBuilder.Entity<Person>().HasData(person);
             }
 
+            // Fluent Api example
+            // Use Fluent Api to Configure the PIN property of Person entity to have a specific column type
+            modelBuilder.Entity<Person>().Property(column => column.PIN)
+                .HasColumnType("varchar(6)");
+
+            //modelBuilder.Entity<Person>().HasIndex(c => c.PIN).IsUnique(); // to set unique column
         }
 
         /// <summary>
