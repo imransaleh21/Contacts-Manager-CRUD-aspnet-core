@@ -21,5 +21,7 @@ namespace Entities
         [StringLength(65)]
         public string? Address { get; set; }
         public bool? ReceiveNewsLettter { get; set; }
+
+        public string? PIN { get; set; }
     }
 }

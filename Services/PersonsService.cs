@@ -57,6 +57,10 @@ namespace Services
             person.PersonId = Guid.NewGuid();
 
             // Add the person to the Persons DbSet and save changes
+            //_db.Persons.Add(person);
+            //_db.SaveChanges();
+
+            // Using stored procedure to insert person
             _db.sp_InsertPerson(person);
 
             //Now convert the person object into Person Response DTO type and fetch the country name if available
