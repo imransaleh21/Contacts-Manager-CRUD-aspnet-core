@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -26,18 +27,18 @@ namespace Services
         /// </summary>
         /// <param name="person"></param>
         /// <returns>person response theof  person object</returns>
-        private PersonResponse PersonToPersonResponseWithCountry(Person person)
-        {
-            PersonResponse personResponse = person.ToPersonResponse();
+        //private PersonResponse PersonToPersonResponseWithCountry(Person person)
+        //{
+        //    PersonResponse personResponse = person.ToPersonResponse();
 
-            //If the person has a countryId, then get the country name from the countries service only if there is a country
-            //with the given countryId
-            if (person.CountryId != null)
-            {
-                personResponse.Country = _countriesService.GetCountryByCountryId(person.CountryId)?.CountryName;
-            }
-            return personResponse;
-        }
+        //    //If the person has a countryId, then get the country name from the countries service only if there is a country
+        //    //with the given countryId
+        //    if (person.CountryId != null)
+        //    {
+        //        personResponse.Country = _countriesService.GetCountryByCountryId(person.CountryId)?.CountryName;
+        //    }
+        //    return personResponse;
+        //}
 
         /// <summary>
         /// Adds a new person object to the list of persons.
@@ -64,7 +65,7 @@ namespace Services
             _db.sp_InsertPerson(person);
 
             //Now convert the person object into Person Response DTO type and fetch the country name if available
-            return PersonToPersonResponseWithCountry(person);
+            return person.ToPersonResponse();
         }
 
         /// <summary>
@@ -73,13 +74,14 @@ namespace Services
         /// <returns>PersonResponse details</returns>
         public List<PersonResponse> GetAllPersons()
         {
-            /*return _db.Persons.ToList()
-                .Select(person => PersonToPersonResponseWithCountry(person)).ToList();*/
+            var person = _db.Persons.Include("Country").ToList();
+            return person
+                .Select(person => person.ToPersonResponse()).ToList();
 
             // Using stored procedure to get all persons,
             // now we don't need to call .ToList() to make list on memory every time
-            return _db.sp_GetAllPersons()
-                .Select(person => PersonToPersonResponseWithCountry(person)).ToList();
+            //return _db.sp_GetAllPersons()
+            //    .Select(person => PersonToPersonResponseWithCountry(person)).ToList();
         }
 
         /// <summary>

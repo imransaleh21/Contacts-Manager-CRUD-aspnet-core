@@ -97,7 +97,8 @@ namespace ServiceContracts.DTO
                 // Calculate age based on DateOfBirth
                 Age = person.DateOfBirth.HasValue 
                     ? $"{(DateTime.Now - person.DateOfBirth.Value).TotalDays / 365:F0} years" 
-                    : null
+                    : null,
+                Country = person.Country?.CountryName
             };
         }
     }

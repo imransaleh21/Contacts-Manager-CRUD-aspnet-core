@@ -12,19 +12,19 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="countryAddRequest">Country object to be added</param>
         /// <returns>Country object after adding it with country id</returns>
-        CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
+        Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest);
 
         /// <summary>
         /// By default, this method returns all countries in the list.
         /// </summary>
         /// <returns>All Countries in the list</returns>
-        List<CountryResponse> GetAllCountries();
+        Task<List<CountryResponse>> GetAllCountries();
 
         /// <summary>
         /// Gets a country by its unique identifier.
         /// </summary>
         /// <param name="countryId">The unique identifier used to search for a country.</param>
         /// <returns>Returns the appropriate Country with the specified ID.</returns>
-        CountryResponse? GetCountryByCountryId(Guid? countryId);
+        Task<CountryResponse?> GetCountryByCountryId(Guid? countryId);
     }
 }
