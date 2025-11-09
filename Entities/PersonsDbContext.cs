@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 namespace Entities
 {
     public class PersonsDbContext : DbContext
@@ -68,7 +69,7 @@ namespace Entities
             return Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToList();
         }
 
-        public int sp_InsertPerson(Person person)
+        public async Task<int> sp_InsertPerson(Person person)
         {
             SqlParameter[] sqlParameters = new SqlParameter[]
             {
@@ -82,7 +83,7 @@ namespace Entities
                 new SqlParameter("@ReceiveNewsLettter", person.ReceiveNewsLettter ?? (object)DBNull.Value)
             };
 
-            return Database.ExecuteSqlRaw("EXECUTE [dbo].[InsertPerson] " +
+            return await Database.ExecuteSqlRawAsync("EXECUTE [dbo].[InsertPerson] " +
                 "@PersonId, @PersonName, @Email, @DateOfBirth, @Gender, @CountryId," +
                 " @Address, @ReceiveNewsLettter", sqlParameters);
         }

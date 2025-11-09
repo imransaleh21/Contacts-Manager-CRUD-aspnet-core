@@ -2,6 +2,7 @@
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
+using System.Threading.Tasks;
 
 namespace Contacts_Manager_CRUD.Controllers
 {
@@ -24,7 +25,7 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("[action]")] // This route is work same as the below one
         //[Route("index")]
         [Route("/")]
-        public IActionResult Index(string searchBy, string searchValue,
+        public async Task<IActionResult> Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             // Code for searching persons based on the search criteria
@@ -45,12 +46,12 @@ namespace Contacts_Manager_CRUD.Controllers
 
             // based on the search criteria, filtered persons will be returned
             // and if no search criteria is provided, all persons will be returned
-            List<PersonResponse> persons = _personsService.GetFilteredPersons(searchBy, searchValue);
+            List<PersonResponse> persons = await _personsService.GetFilteredPersons(searchBy, searchValue);
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchValue = searchValue;
 
             // Code for sorting persons based on the sort criteria
-            List<PersonResponse>? sortedPersons = _personsService.GetSortedPersons(persons, sortBy, sortOrder);
+            List<PersonResponse>? sortedPersons = _personsService.GetSortedPersons( persons, sortBy, sortOrder);
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrder;
             return View(sortedPersons); // Return the view with the list of persons at Views/Persons/Index.cshtml
@@ -63,10 +64,10 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             // This action method is used to render the Create view for adding a new person
-            List<CountryResponse> countryList = _countriesService.GetAllCountries();
+            List<CountryResponse> countryList = await _countriesService.GetAllCountries();
             ViewBag.Countries = countryList;
             return View();
         }
@@ -78,12 +79,12 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpPost]
-        public IActionResult Create(PersonAddRequest person)
+        public async Task<IActionResult> Create(PersonAddRequest person)
         {
             // This action method is used to handle the form submission for creating a new person
             if (!ModelState.IsValid)
             {
-                List<CountryResponse> countryList = _countriesService.GetAllCountries();
+                List<CountryResponse> countryList = await  _countriesService.GetAllCountries();
                 ViewBag.Countries = countryList;
                 ViewBag.Errors = ModelState.Values.SelectMany(error =>  error.Errors)
                     .Select(errorMessages => errorMessages.ErrorMessage).ToList();
@@ -91,7 +92,7 @@ namespace Contacts_Manager_CRUD.Controllers
             }
 
             // If the model state is valid, add the person using the service
-            PersonResponse newPerson = _personsService.AddPerson(person);
+            PersonResponse newPerson = await _personsService.AddPerson(person);
             // After adding the person, redirect to the Index action method to display the updated list of persons
             return RedirectToAction("Index", "Persons");
         }

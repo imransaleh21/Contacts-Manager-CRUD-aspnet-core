@@ -4,6 +4,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
+using System.Threading.Tasks;
 
 namespace xUnitTests
 {
@@ -17,7 +18,7 @@ namespace xUnitTests
         {
             /* As the PersonsService use DI Container to inject the CountriesService, but when we use xUnit tests,
             we cannot use the the program.cs file DI Container, so we have to create the CountriesService object manually and
-            pass it to the PersonsService constructor.*/
+            pass it to the PersonsService constructor. */
             /* In future, we can use a mocking framework like Moq to mock the CountriesService */
 
             _countriesService = new CountriesService(
@@ -33,12 +34,12 @@ namespace xUnitTests
         /// before calling the AddPerson it adds some countries to the countries service to get the country id
         /// </summary>
         /// <returns> List of PersonResponse</returns>
-        internal List<PersonResponse> CreatePersonList()
+        internal async Task<List<PersonResponse>> CreatePersonList()
         {
             // At first add some countries to the countries service to get the country id
-            CountryResponse countryResponse1 = _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Bangladesh" });
-            CountryResponse countryResponse2 = _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Pakistan" });
-            CountryResponse countryResponse3 = _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Afganisthan" });
+            CountryResponse countryResponse1 = await _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Bangladesh" });
+            CountryResponse countryResponse2 = await _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Pakistan" });
+            CountryResponse countryResponse3 = await _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Afganisthan" });
 
             List<PersonResponse> personResponsesWhileAdding = new();
 
@@ -77,33 +78,33 @@ namespace xUnitTests
                     Address = "Kabul",
                     ReceiveNewsLettter = false
                 }
-
             };
 
             // Replace the foreach loop with a LINQ expression,
             // LINQ is used here as we need to convert each PersonAddRequest to PersonResponse
-            personResponsesWhileAdding = personAddRequests
-                .Select(person => _personsService.AddPerson(person))
-                .ToList();
+            foreach (PersonAddRequest personRequest in personAddRequests)
+            {
+                PersonResponse personResponse = await _personsService.AddPerson(personRequest);
+                personResponsesWhileAdding.Add(personResponse);
+            }
+
             return personResponsesWhileAdding;
         }
         #endregion
 
         #region AddPerson Tests
-        // If the request is null, then it should throw an ArgumentNullException.
         [Fact]
-        public void AddPerson_NullRequest()
+        public async Task AddPerson_NullRequest()
         {
             //Arrange
             PersonAddRequest request = null;
 
             //Assert with Act
-            Assert.Throws<ArgumentNullException>(() => _personsService.AddPerson(request));
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await _personsService.AddPerson(request));
         }
 
-        //If the person name is null, then it should throw an ArgumentException.
         [Fact]
-        public void AddPerson_NullPersonName() 
+        public async Task AddPerson_NullPersonName()
         {
             //Arrange
             PersonAddRequest request = new()
@@ -112,12 +113,11 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            Assert.Throws<ArgumentException>(() => _personsService.AddPerson(request));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await _personsService.AddPerson(request));
         }
 
-        //If the person email is null, then it should throw an ArgumentException.
         [Fact]
-        public void AddPerson_NullPersonEmail()
+        public async Task AddPerson_NullPersonEmail()
         {
             //Arrange
             PersonAddRequest request = new()
@@ -126,12 +126,11 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            Assert.Throws<ArgumentException>(() => _personsService.AddPerson(request));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await _personsService.AddPerson(request));
         }
 
-        //If the person ReceiveNewsLettter is null, then it should throw an ArgumentException.
         [Fact]
-        public void AddPerson_NullPersonReceiveNewsLettter()
+        public async Task AddPerson_NullPersonReceiveNewsLettter()
         {
             //Arrange
             PersonAddRequest request = new()
@@ -140,13 +139,11 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            Assert.Throws<ArgumentException>(() => _personsService.AddPerson(request));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await _personsService.AddPerson(request));
         }
 
-        //If proper person details is provided then it should insert into the person list. Also it should
-        // return the PersonResponse Object with newly generated person Id
         [Fact]
-        public void AddPerson_ProperPersonDetails() 
+        public async Task AddPerson_ProperPersonDetails()
         {
             //Arrange
             PersonAddRequest request = new()
@@ -161,30 +158,28 @@ namespace xUnitTests
             };
 
             //Act
-            PersonResponse personResponse = _personsService.AddPerson(request);
-            List<PersonResponse> personResponseList = _personsService.GetAllPersons();
+            PersonResponse personResponse = await _personsService.AddPerson(request);
+            List<PersonResponse> personResponseList = await _personsService.GetAllPersons();
 
             //Assert
             Assert.True(personResponse.PersonId != Guid.Empty);
             Assert.Contains(personResponse, personResponseList);
-
         }
         #endregion
+
         #region GetPersonByPersonId Tests
-        // when person id is null, it should return null
         [Fact]
-        public void GetPersonByPersonId_NullPersonId()
+        public async Task GetPersonByPersonId_NullPersonId()
         {
             //Arrange
             Guid? PersonId = null;
-            //Assert with Act
-            Assert.Null(_personsService.GetPersonByPersonId(PersonId));
 
+            //Assert with Act
+            Assert.Null(await _personsService.GetPersonByPersonId(PersonId));
         }
 
-        // Get Appropriate person if proper person id is provided
         [Fact]
-        public void GetPersonByPersonId_AppropriatePersonById()
+        public async Task GetPersonByPersonId_AppropriatePersonById()
         {
             //Arrange
             PersonAddRequest personAddRequest = new()
@@ -197,102 +192,78 @@ namespace xUnitTests
                 Address = "Birol, Dinajpur",
                 ReceiveNewsLettter = false
             };
-            PersonResponse personAddResponse = _personsService.AddPerson(personAddRequest); // Add a person with details
-            Guid personId = personAddResponse.PersonId; // get the person's personId
+            PersonResponse personAddResponse = await _personsService.AddPerson(personAddRequest);
+            Guid personId = personAddResponse.PersonId;
 
             //Act
-            PersonResponse getPersonResponseById = _personsService.GetPersonByPersonId(personId); //get the specific person by it's id
+            PersonResponse? getPersonResponseById = await _personsService.GetPersonByPersonId(personId);
 
             //Assert
             Assert.Equal(getPersonResponseById, personAddResponse);
-
         }
         #endregion
+
         #region GetAllPersons Tests
-        //If the person list is empty then retun empty list
         [Fact]
-        public void GetAllPersons_EmptyPersonList()
+        public async Task GetAllPersons_EmptyPersonList()
         {
             //Assert with Act
-            Assert.Empty(_personsService.GetAllPersons());
-
+            Assert.Empty(await _personsService.GetAllPersons());
         }
 
-        //Get all the person's details in the list
         [Fact]
-        public void GetAllPersons_ListOfPersons()
+        public async Task GetAllPersons_ListOfPersons()
         {
             //Arrange
-            List<PersonResponse> personResponsesWhileGettingAllPerson = new();
-            List<PersonResponse> personResponsesWhileAdding = CreatePersonList(); // Create a list of persons
+            List<PersonResponse> personResponsesWhileAdding = await CreatePersonList();
 
             //Act
-            personResponsesWhileGettingAllPerson = _personsService.GetAllPersons();
+            List<PersonResponse> personResponsesWhileGettingAllPerson = await _personsService.GetAllPersons();
 
             //Assert
-            // here LINQ expression is not used,
-            // as we need to check if the personResponsesWhileAdding contains all the persons in personResponsesWhileGettingAllPerson
             foreach (PersonResponse personResponse in personResponsesWhileAdding)
             {
                 Assert.Contains(personResponse, personResponsesWhileGettingAllPerson);
             }
-
         }
-
         #endregion
+
         #region GetFilteredPersons Tests
-        //If the search text is Empty and the searchBy is PersonName, then it should return all persons
         [Fact]
-        public void GetFilteredPersons_EmptySearchText()
+        public async Task GetFilteredPersons_EmptySearchText()
         {
             //Arrange
-            List<PersonResponse>? filteredPersonResponse = new();
-            List<PersonResponse> personResponsesWhileAdding = CreatePersonList(); // Create a list of persons
+            List<PersonResponse> personResponsesWhileAdding = await CreatePersonList();
+
             //Act
-            filteredPersonResponse = _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
+            List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
 
             //Assert
-            // here LINQ expression is not used,
-            // as we need to check if the personResponsesWhileAdding contains all the persons in personResponsesWhileGettingAllPerson
             foreach (PersonResponse personResponse in personResponsesWhileAdding)
             {
                 Assert.Contains(personResponse, filteredPersonResponse);
             }
         }
 
-        //After adding some persons to the persons list, we will filter the persons by PersonName
-        //and some search text. If the search text is matching with the person name then it should return the filtered persons
         [Fact]
-        public void GetFilteredPersons_ProperSearchTextForPersonName()
+        public async Task GetFilteredPersons_ProperSearchTextForPersonName()
         {
             //Arrange
-            List<PersonResponse>? filteredPersonResponse = new();
-            List<PersonResponse> personResponsesWhileAdding = CreatePersonList(); // Create a list of persons
+            List<PersonResponse> personResponsesWhileAdding = await CreatePersonList();
+
             //Act
-            filteredPersonResponse = _personsService.GetFilteredPersons(nameof(Person.PersonName), "ha");
+            List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ha");
 
             //Assert
-            // here LINQ expression is not used,
-            // as we need to check if the personResponsesWhileAdding contains all the persons in personResponsesWhileGettingAllPerson
             foreach (PersonResponse personResponse in personResponsesWhileAdding)
             {
-                if(personResponse.PersonName != null &&
+                if (personResponse.PersonName != null &&
                     personResponse.PersonName.Contains("ha", StringComparison.OrdinalIgnoreCase))
                 {
                     Assert.Contains(personResponse, filteredPersonResponse);
                 }
             }
         }
-
-        #endregion
-        #region GetSortedPersons Tests
-        // write unit test for GetSortedPersons method after implementing it in the PersonsService class
-        #endregion
-        #region UpdatePerson Tests
-        // Will write unit tests for UpdatePerson method after implementing it in the PersonsService class
-        #endregion
-        #region DeletePerson Tests
-        // will write unit tests for DeletePerson method after implementing it in the PersonsService class
         #endregion
     }
 }

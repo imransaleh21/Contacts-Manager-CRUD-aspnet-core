@@ -13,20 +13,20 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="personAdd"></param>
         /// <returns> The same person details, along with newly generated personId</returns>
-        PersonResponse AddPerson(PersonAddRequest? addPerson);
+        Task<PersonResponse> AddPerson(PersonAddRequest? addPerson);
 
         /// <summary>
         /// By default, this method returns all persons in the list.
         /// </summary>
         /// <returns>Full list of the persons details of PersonResponse type</returns>
-        List<PersonResponse> GetAllPersons();
+        Task<List<PersonResponse>> GetAllPersons();
 
         /// <summary>
         /// This method will get a personId and send the specific person's details
         /// </summary>
         /// <param name="id"></param>
         /// <returns>If the Id is valid then return the person's details otherwise send a proper message</returns>
-        PersonResponse? GetPersonByPersonId(Guid? personId);
+        Task<PersonResponse?> GetPersonByPersonId(Guid? personId);
 
         /// <summary>
         /// This method will filter the persons based on the search criteria provided,
@@ -35,7 +35,7 @@ namespace ServiceContracts
         /// <param name="searchBy">Field to search</param>
         /// <param name="searchValue">Value string for search</param>
         /// <returns>the filtered persons list after filter with specific value string</returns>
-        List<PersonResponse> GetFilteredPersons(string searchBy, string? searchValue);
+        Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchValue);
 
         /// <summary>
         /// This method will sort the persons based on the sort criteria provided,
@@ -51,14 +51,14 @@ namespace ServiceContracts
         /// </summary>
         /// <param name="personUpdate">Person Details to be Updated</param>
         /// <returns>Updated person info</returns>
-        PersonResponse UpdatePerson(PersonUpdateRequest? personUpdate);
+        Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdate);
 
         /// <summary>
         /// This method will delete a person based on the provided personId.
         /// </summary>
         /// <param name="personId">Person Id of the person who has to be deleted</param>
         /// <returns>True if deletion is successful, otherwise false</returns>
-        bool DeletePerson(Guid? personId);
+        Task<bool> DeletePerson(Guid? personId);
 
     }
 }

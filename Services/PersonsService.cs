@@ -47,7 +47,7 @@ namespace Services
         /// <returns> the added person will be returned here </returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public PersonResponse AddPerson(PersonAddRequest? addPerson)
+        public async Task<PersonResponse> AddPerson(PersonAddRequest? addPerson)
         {
             if(addPerson == null) throw new ArgumentNullException(nameof(addPerson));
             // Add model validation for any validation error
@@ -62,7 +62,7 @@ namespace Services
             //_db.SaveChanges();
 
             // Using stored procedure to insert person
-            _db.sp_InsertPerson(person);
+            await _db.sp_InsertPerson(person);
 
             //Now convert the person object into Person Response DTO type and fetch the country name if available
             return person.ToPersonResponse();
@@ -72,9 +72,9 @@ namespace Services
         /// By default, this method will convert the Person list to PersonResponse list and returns all persons details.
         /// </summary>
         /// <returns>PersonResponse details</returns>
-        public List<PersonResponse> GetAllPersons()
+        public async Task<List<PersonResponse>> GetAllPersons()
         {
-            var person = _db.Persons.Include("Country").ToList();
+            var person = await _db.Persons.Include("Country").ToListAsync();
             return person
                 .Select(person => person.ToPersonResponse()).ToList();
 
@@ -89,11 +89,11 @@ namespace Services
         /// </summary>
         /// <param name="personId"></param>
         /// <returns>Return person details</returns>
-        public PersonResponse? GetPersonByPersonId(Guid? personId)
+        public async Task<PersonResponse?> GetPersonByPersonId(Guid? personId)
         {
             if(personId == null) return null;
-            Person? person = _db.Persons
-                .FirstOrDefault(person => person.PersonId == personId);
+            Person? person = await _db.Persons
+                .FirstOrDefaultAsync(person => person.PersonId == personId);
 
             return person?.ToPersonResponse()??null;
         }
@@ -105,9 +105,9 @@ namespace Services
         /// <param name="searchBy"></param>
         /// <param name="searchValue"></param>
         /// <returns>It return the list of PersonResponse</returns>
-        public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchValue)
+        public async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchValue)
         {
-            List<PersonResponse> allPersons = GetAllPersons();
+            List<PersonResponse> allPersons = await GetAllPersons();
             List<PersonResponse> matchingPersons = allPersons;
 
             if(string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchValue)) 
@@ -253,7 +253,7 @@ namespace Services
         /// <returns>After updating the person based on updated info this function will return PersonResponse obj</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+        public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
         {
             // check if the personUpdate is null
             if (personUpdateRequest == null) throw new ArgumentNullException(nameof(personUpdateRequest));
@@ -262,8 +262,8 @@ namespace Services
             ValidationHelper.ValidateTheModelObject(personUpdateRequest);
 
             // Get the person details by Person ID that need to be updated 
-            Person? matchedPerson = _db.Persons
-                .FirstOrDefault(person => person.PersonId == personUpdateRequest.PersonId);
+            Person? matchedPerson = await _db.Persons
+                .FirstOrDefaultAsync(person => person.PersonId == personUpdateRequest.PersonId);
             if (matchedPerson == null) throw new ArgumentException("Invalid person id");
 
             /*
@@ -281,7 +281,7 @@ namespace Services
             matchedPerson.ReceiveNewsLettter = personUpdateRequest.ReceiveNewsLettter;
 
             // Update the person details in the Persons DbSet and save changes
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
 
             // Convert the person object to PersonResponse object and return
@@ -295,17 +295,17 @@ namespace Services
         /// <param name="personId">Person Id of the person who has to be deleted</param>
         /// <returns>True if deletion is successful, otherwise false</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public bool DeletePerson(Guid? personId)
+        public async Task<bool> DeletePerson(Guid? personId)
         {
             // Check if the personId is null
             if (personId == null) throw new ArgumentNullException(nameof(personId));
 
-            Person? personToRemove = _db.Persons.FirstOrDefault(person => person.PersonId == personId);
+            Person? personToRemove = await _db.Persons.FirstOrDefaultAsync(person => person.PersonId == personId);
             if (personToRemove == null) return false;
 
             // If the person is found, remove it from the list of persons
             _db.Persons.Remove(personToRemove);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return true;
         }
     }
