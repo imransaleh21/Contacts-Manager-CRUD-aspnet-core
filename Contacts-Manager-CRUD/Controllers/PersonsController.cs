@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Rotativa.AspNetCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -95,6 +96,19 @@ namespace Contacts_Manager_CRUD.Controllers
             PersonResponse newPerson = await _personsService.AddPerson(person);
             // After adding the person, redirect to the Index action method to display the updated list of persons
             return RedirectToAction("Index", "Persons");
+        }
+        #endregion
+
+        #region Persons PDF Report
+        [Route("[Action]")]
+        public async Task<IActionResult> PersonsPDF()
+        {
+            List<PersonResponse> persons = await _personsService.GetAllPersons();
+            return new ViewAsPdf("PersonsPDF", persons)
+            {
+                FileName = "PersonsReport.pdf",
+                PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape
+            };
         }
         #endregion
     }

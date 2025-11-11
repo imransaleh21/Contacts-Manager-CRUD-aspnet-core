@@ -1,6 +1,5 @@
 ﻿@if (ViewBag.CurrentSortBy == ViewBag.ColumnName &&
-                ViewBag.CurrentSortOrder == SortOrderOptions.ASC)
-{
+                ViewBag.CurrentSortOrder == SortOrderOptions.ASC){
     <th>
         <a href="~/persons/index?
 searchBy=@(ViewBag.CurrentSearchBy)&searchValue=@(ViewBag.CurrentSearchValue)&
@@ -9,8 +8,7 @@ sortBy=@(ViewBag.ColumnName)&sortOrder=@(SortOrderOptions.DESC)">@(ViewBag.Displ
     </th>
 }
 else if (ViewBag.CurrentSortBy == ViewBag.ColumnName &&
-        ViewBag.CurrentSortOrder == SortOrderOptions.DESC)
-{
+        ViewBag.CurrentSortOrder == SortOrderOptions.DESC){
     <th>
         <a href="~/persons/index?
 searchBy=@(ViewBag.CurrentSearchBy)&searchValue=@(ViewBag.CurrentSearchValue)&
@@ -18,8 +16,7 @@ sortBy=@(ViewBag.ColumnName)&sortOrder=@(SortOrderOptions.ASC)">@(ViewBag.Displa
         <i class="fa-solid fa-sort-down"></i>
     </th>
 }
-else
-{
+else{
     <th>
         <a href="~/persons/index?
 searchBy=@(ViewBag.CurrentSearchBy)&searchValue=@(ViewBag.CurrentSearchValue)&
