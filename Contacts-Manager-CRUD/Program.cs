@@ -1,7 +1,8 @@
-using ServiceContracts;
-using Services;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using ServiceContracts;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -14,7 +15,8 @@ builder.Services.AddDbContext<PersonsDbContext>
     (options =>{
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); // Connection string from appsettings.json
     });
-
+// Setting the EPPlus license context
+ExcelPackage.License.SetNonCommercialPersonal("<Your Name>");
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

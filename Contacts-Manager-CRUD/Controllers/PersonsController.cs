@@ -99,7 +99,7 @@ namespace Contacts_Manager_CRUD.Controllers
         }
         #endregion
 
-        #region Persons PDF Report
+        #region Persons Report Downloads
         [Route("[Action]")]
         public async Task<IActionResult> PersonsPDF()
         {
@@ -109,6 +109,19 @@ namespace Contacts_Manager_CRUD.Controllers
                 FileName = "PersonsReport.pdf",
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape
             };
+        }
+        [Route("[Action]")]
+        public async Task<IActionResult> PersonsCSV()
+        {
+            MemoryStream personsCSV = await _personsService.GetPersonsListCSV();
+            return File(personsCSV.ToArray(), "application/octet-stream", "PersonsReport.csv");
+        }
+        [Route("[Action]")]
+        public async Task<IActionResult> PersonsExcel()
+        {
+            MemoryStream personsExcel = await _personsService.GetPersonsListExcel();
+            return File(personsExcel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "PersonsReport.xlsx");
         }
         #endregion
     }

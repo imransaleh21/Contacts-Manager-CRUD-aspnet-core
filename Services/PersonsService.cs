@@ -1,10 +1,13 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
+using CsvHelper;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services.Helpers;
+using OfficeOpenXml;
 
 namespace Services
 {
@@ -21,25 +24,6 @@ namespace Services
             _countriesService = countriesService;
             _db = dbContext;
         }
-
-        /// <summary>
-        /// Converts a Person object to a PersonResponse object and fetches the country name if available.
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns>person response theof  person object</returns>
-        //private PersonResponse PersonToPersonResponseWithCountry(Person person)
-        //{
-        //    PersonResponse personResponse = person.ToPersonResponse();
-
-        //    //If the person has a countryId, then get the country name from the countries service only if there is a country
-        //    //with the given countryId
-        //    if (person.CountryId != null)
-        //    {
-        //        personResponse.Country = _countriesService.GetCountryByCountryId(person.CountryId)?.CountryName;
-        //    }
-        //    return personResponse;
-        //}
-
         /// <summary>
         /// Adds a new person object to the list of persons.
         /// </summary>
@@ -307,6 +291,67 @@ namespace Services
             _db.Persons.Remove(personToRemove);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// This method will generate a CSV file containing the list of all persons.
+        /// </summary>
+        /// <returns>memoryStream of the list</returns>
+        public async Task<MemoryStream> GetPersonsListCSV()
+        {
+            MemoryStream memoryStream = new();
+            StreamWriter streamWriter = new(memoryStream);
+            CsvWriter csvWriter = new(streamWriter, CultureInfo.InvariantCulture, leaveOpen: true);
+
+            // Below WriteHeader and WriteRecords write everything from the response,
+            // If we want to write specific raw then we can use WriteField (ref v.: 18/237)
+            csvWriter.WriteHeader<PersonResponse>(); // Write the header row
+            csvWriter.NextRecord();
+            List<PersonResponse> allPersons = await GetAllPersons();
+
+            await csvWriter.WriteRecordsAsync(allPersons); // Write all person records asynchronously
+            memoryStream.Position = 0; // Reset the memory stream position to the beginning
+            return memoryStream;
+        }
+        /// <summary>
+        /// This method will generate an Excel file containing the list of all persons.
+        /// </summary>
+        /// <returns>Memory stream of person list in Excel format</returns>
+        public async Task<MemoryStream> GetPersonsListExcel()
+        {
+            MemoryStream memoryStream = new();
+            using (ExcelPackage excelPackage = new(memoryStream))
+            {
+                ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("PersonsList");
+                // Add header row
+                worksheet.Cells[1, 1].Value = "PersonName";
+                worksheet.Cells[1, 2].Value = "Email";
+                worksheet.Cells[1, 3].Value = "DateOfBirth";
+                worksheet.Cells[1, 4].Value = "Age";
+                worksheet.Cells[1, 5].Value = "Gender";
+                worksheet.Cells[1, 6].Value = "Country";
+                worksheet.Cells[1, 7].Value = "Address";
+                worksheet.Cells[1, 8].Value = "ReceiveNewsLettter";
+                // Add data rows
+                List<PersonResponse> allPersons = await GetAllPersons();
+                for (int i = 0; i < allPersons.Count; i++)
+                {
+                    PersonResponse person = allPersons[i];
+                    worksheet.Cells[i + 2, 1].Value = person.PersonName;
+                    worksheet.Cells[i + 2, 2].Value = person.Email;
+                    worksheet.Cells[i + 2, 3].Value = person.DateOfBirth?.ToString("dd MMMM yyyy");
+                    worksheet.Cells[i + 2, 4].Value = person.Age;
+                    worksheet.Cells[i + 2, 5].Value = person.Gender;
+                    worksheet.Cells[i + 2, 6].Value = person.Country;
+                    worksheet.Cells[i + 2, 7].Value = person.Address;
+                    worksheet.Cells[i + 2, 8].Value = person.ReceiveNewsLettter;
+                }
+                // this auto fit will adjust the width of all columns based on their content
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+                await excelPackage.SaveAsAsync(memoryStream);
+            }
+            memoryStream.Position = 0; // Reset the memory stream position to the beginning
+            return memoryStream;
         }
     }
 }

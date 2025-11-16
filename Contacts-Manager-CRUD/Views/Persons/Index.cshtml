@@ -4,8 +4,11 @@
 }
 <form action="~/persons/index" method="get">
     <h1>Persons</h1>
-    <a href="~/persons/create">Create Person</a>
-    <a href="~/persons/PersonsPDF">Download Persons List</a>
+    <a href="~/persons/create" class="mr">Create Person</a>
+    <a href="~/persons/PersonsPDF" class="mr">PersonsListPDF</a>
+    <a href="~/persons/PersonsCSV" class="mr">PersonsListCSV</a>
+    <a href="~/persons/PersonsExcel">PersonsListExcel</a>
+
 
     <div class="box flex">
         @* Search/filter section: dropdown for search field, search input, search button, and clear link *@
