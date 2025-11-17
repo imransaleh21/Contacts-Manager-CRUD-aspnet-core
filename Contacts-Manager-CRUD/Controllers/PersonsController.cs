@@ -20,9 +20,9 @@ namespace Contacts_Manager_CRUD.Controllers
             _countriesService = countriesService;
         }
         /// <summary>
-        /// Index action method for the PersonsController. 
+        /// Index action method for the PersonsController. This will return the view of a list of persons based on different criteria
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Return the view with the list of persons</returns>
         [Route("[action]")] // This route is work same as the below one
         //[Route("index")]
         [Route("/")]
@@ -100,6 +100,7 @@ namespace Contacts_Manager_CRUD.Controllers
         #endregion
 
         #region Persons Report Downloads
+        // Download persons list in three format
         [Route("[Action]")]
         public async Task<IActionResult> PersonsPDF()
         {

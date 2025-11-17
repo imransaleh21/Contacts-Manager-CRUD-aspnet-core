@@ -15,8 +15,10 @@ builder.Services.AddDbContext<PersonsDbContext>
     (options =>{
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); // Connection string from appsettings.json
     });
-// Setting the EPPlus license context
-ExcelPackage.License.SetNonCommercialPersonal("<Your Name>");
+// Setting the EPPlus license context for non-commercial use to generate Excel files
+ExcelPackage.License.SetNonCommercialPersonal("Imran88");
+
+// Building the app
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
