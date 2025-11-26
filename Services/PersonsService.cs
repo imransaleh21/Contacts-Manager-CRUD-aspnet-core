@@ -42,11 +42,12 @@ namespace Services
             person.PersonId = Guid.NewGuid();
 
             // Add the person to the Persons DbSet and save changes
-            //_db.Persons.Add(person);
-            //_db.SaveChanges();
+            _db.Persons.Add(person);
+            await _db.SaveChangesAsync();
 
             // Using stored procedure to insert person
-            await _db.sp_InsertPerson(person);
+            // But this create a problem for mocking the DbContext in unit tests
+            //await _db.sp_InsertPerson(person);
 
             //Now convert the person object into Person Response DTO type and fetch the country name if available
             return person.ToPersonResponse();

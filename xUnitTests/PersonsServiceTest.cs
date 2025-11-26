@@ -5,6 +5,9 @@ using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
 using System.Threading.Tasks;
+using EntityFrameworkCoreMock;
+using Moq;
+using AutoFixture;
 
 namespace xUnitTests
 {
@@ -13,19 +16,23 @@ namespace xUnitTests
 
         private readonly ICountriesService _countriesService;
         private readonly IPersonsService _personsService;
+        private readonly IFixture _fixture;
 
         public PersonsServiceTest()
         {
-            /* As the PersonsService use DI Container to inject the CountriesService, but when we use xUnit tests,
-            we cannot use the the program.cs file DI Container, so we have to create the CountriesService object manually and
-            pass it to the PersonsService constructor. */
-            /* In future, we can use a mocking framework like Moq to mock the CountriesService */
+            _fixture = new Fixture();
+            // Mock the DbContext and DbSets for Persons and Countries
+            List<Country> countriesInitialData = new List<Country>() { };
+            List<Person> personsInitialData = new List<Person>() { };
+            // Creating DbContextMock
+            DbContextMock<PersonsDbContext> dbContextMock = new DbContextMock<PersonsDbContext>(
+                new DbContextOptionsBuilder<PersonsDbContext>().Options);
+            PersonsDbContext dbContext = dbContextMock.Object;
+            dbContextMock.CreateDbSetMock(dbSet => dbSet.Persons, personsInitialData);
+            dbContextMock.CreateDbSetMock(dbSet => dbSet.Countries, countriesInitialData);
 
-            _countriesService = new CountriesService(
-                new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
-
-            _personsService = new PersonsService(
-                new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options), _countriesService);
+            _countriesService = new CountriesService(dbContext);
+            _personsService = new PersonsService(dbContext, _countriesService);
         }
 
         #region CreatePersonList
@@ -37,47 +44,33 @@ namespace xUnitTests
         internal async Task<List<PersonResponse>> CreatePersonList()
         {
             // At first add some countries to the countries service to get the country id
-            CountryResponse countryResponse1 = await _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Bangladesh" });
-            CountryResponse countryResponse2 = await _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Pakistan" });
-            CountryResponse countryResponse3 = await _countriesService.AddCountry(new CountryAddRequest() { CountryName = "Afganisthan" });
+            CountryResponse countryResponse1 = await _countriesService.AddCountry(_fixture.Create<CountryAddRequest>());
+            CountryResponse countryResponse2 = await _countriesService.AddCountry(_fixture.Create<CountryAddRequest>());
+            CountryResponse countryResponse3 = await _countriesService.AddCountry(_fixture.Create<CountryAddRequest>());
 
             List<PersonResponse> personResponsesWhileAdding = new();
 
             // Add some persons to the persons service with the countries added above
             List<PersonAddRequest> personAddRequests = new()
             {
-                new()
-                {
-                    PersonName = "Imran Muhammad",
-                    Email = "imran@gmail.com",
-                    DateOfBirth = DateTime.Parse("2000-02-21"),
-                    Gender = GenderOptions.Male,
-                    CountryId = countryResponse1.CountryID,
-                    Address = "Mohammadpur, Dhaka",
-                    ReceiveNewsLettter = true
-                },
+                _fixture.Build<PersonAddRequest>()
+                .With(t => t.Email, "abc@gmail.com")
+                .With(t => t.DateOfBirth, DateTime.Parse("1995-05-21"))
+                .With(t => t.CountryId, countryResponse1.CountryID)
+                .Create(),
 
-                new()
-                {
-                    PersonName = "Emran Saleh",
-                    Email = "saleh@gmail.com",
-                    DateOfBirth = DateTime.Parse("1999-02-02"),
-                    Gender = GenderOptions.Male,
-                    CountryId = countryResponse2.CountryID,
-                    Address = "Birol, Dinajpur",
-                    ReceiveNewsLettter = true
-                },
+                _fixture.Build<PersonAddRequest>()
+                .With(t => t.PersonName, "Imran")
+                .With(t => t.Email, "saleh@gmail.com")
+                .With(t => t.DateOfBirth, DateTime.Parse("1990-10-24"))
+                .With(t => t.CountryId, countryResponse2.CountryID)
+                .Create(),
 
-                new()
-                {
-                    PersonName = "Muhammad Khan",
-                    Email = "muhammad@gmail.com",
-                    DateOfBirth = DateTime.Parse("1998-09-11"),
-                    Gender = GenderOptions.Male,
-                    CountryId = countryResponse3.CountryID,
-                    Address = "Kabul",
-                    ReceiveNewsLettter = false
-                }
+                _fixture.Build<PersonAddRequest>()
+                .With(t => t.Email, "muhammad@gmail.com")
+                .With(t => t.DateOfBirth, DateTime.Parse("1996-12-20"))
+                .With(t => t.CountryId, countryResponse3.CountryID)
+                .Create()
             };
 
             // Replace the foreach loop with a LINQ expression,
@@ -146,16 +139,10 @@ namespace xUnitTests
         public async Task AddPerson_ProperPersonDetails()
         {
             //Arrange
-            PersonAddRequest request = new()
-            {
-                PersonName = "Imran Saleh",
-                Email = "imran@gmail.com",
-                DateOfBirth = DateTime.Parse("2000-02-21"),
-                Gender = GenderOptions.Male,
-                CountryId = Guid.NewGuid(),
-                Address = "Mohammadpur, Dhaka",
-                ReceiveNewsLettter = true
-            };
+            PersonAddRequest request = _fixture.Build<PersonAddRequest>()
+                .With(temp => temp.Email, "saleh@student.ac.bd")
+                .With(temp => temp.DateOfBirth, DateTime.Parse("2000-02-21"))
+                .Create();
 
             //Act
             PersonResponse personResponse = await _personsService.AddPerson(request);
@@ -182,16 +169,14 @@ namespace xUnitTests
         public async Task GetPersonByPersonId_AppropriatePersonById()
         {
             //Arrange
-            PersonAddRequest personAddRequest = new()
-            {
-                PersonName = "Muhammad",
-                Email = "muhammad@gmail.com",
-                DateOfBirth = DateTime.Parse("1996-02-21"),
-                Gender = GenderOptions.Male,
-                CountryId = Guid.NewGuid(),
-                Address = "Birol, Dinajpur",
-                ReceiveNewsLettter = false
-            };
+            CountryAddRequest request = _fixture.Create<CountryAddRequest>();
+            CountryResponse countryResponse =  await _countriesService.AddCountry(request);
+            PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
+                .With(temp => temp.Email, "abc@gmail,bd")
+                .With(temp => temp.DateOfBirth, DateTime.Parse("1990-05-21"))
+                .With(temp => temp.CountryId, countryResponse.CountryID)
+                .Create();
+
             PersonResponse personAddResponse = await _personsService.AddPerson(personAddRequest);
             Guid personId = personAddResponse.PersonId;
 
@@ -252,13 +237,13 @@ namespace xUnitTests
             List<PersonResponse> personResponsesWhileAdding = await CreatePersonList();
 
             //Act
-            List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ha");
+            List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ra");
 
             //Assert
             foreach (PersonResponse personResponse in personResponsesWhileAdding)
             {
                 if (personResponse.PersonName != null &&
-                    personResponse.PersonName.Contains("ha", StringComparison.OrdinalIgnoreCase))
+                    personResponse.PersonName.Contains("ra", StringComparison.OrdinalIgnoreCase))
                 {
                     Assert.Contains(personResponse, filteredPersonResponse);
                 }

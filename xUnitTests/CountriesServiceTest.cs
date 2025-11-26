@@ -3,16 +3,26 @@ using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
+using EntityFrameworkCoreMock;
+using Moq;
+using AutoFixture;
 
 namespace xUnitTests
 {
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countryService;
+        private readonly IFixture _fixture;
         public CountriesServiceTest()
         {
-            _countryService = new CountriesService(
-                new PersonsDbContext( new DbContextOptionsBuilder<PersonsDbContext>().Options));
+            // This shows the 
+            var countriesInitialData = new List<Country>() { };
+            DbContextMock<PersonsDbContext> dbContextMock = new DbContextMock<PersonsDbContext>(
+                new DbContextOptionsBuilder<PersonsDbContext>().Options);
+            PersonsDbContext dbContext = dbContextMock.Object;
+            dbContextMock.CreateDbSetMock(dbSet => dbSet.Countries, countriesInitialData);
+            _countryService = new CountriesService(dbContext);
+            _fixture = new Fixture();
         }
 
         #region AddCountry Tests
@@ -36,11 +46,9 @@ namespace xUnitTests
         public async Task AddCountry_NullCountryName()
         {
             //Arrange
-            CountryAddRequest? request = new()
-            {
-                CountryName = null
-            };
-
+            CountryAddRequest? request = _fixture.Build<CountryAddRequest>()
+                                                    .With(country => country.CountryName, null as string)
+                                                    .Create();
             //Assert
             await Assert.ThrowsAsync<ArgumentException>(async() =>
             {
@@ -55,14 +63,12 @@ namespace xUnitTests
         public async Task AddCountry_DuplicateCountryName()
         {
             //Arrange
-            CountryAddRequest? request1 = new()
-            {
-                CountryName = "Bangladesh"
-            };
-            CountryAddRequest? request2 = new()
-            {
-                CountryName = "Bangladesh"
-            };
+            CountryAddRequest? request1 = _fixture.Build<CountryAddRequest>()
+                .With(t => t.CountryName, "Bangladesh")
+                .Create();
+            CountryAddRequest? request2 = _fixture.Build<CountryAddRequest>()
+                .With(t => t.CountryName, "Bangladesh")
+                .Create();
 
             //Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -81,10 +87,7 @@ namespace xUnitTests
         public async Task AddCountry_ProperCountryDetails()
         {
             //Arrange
-            CountryAddRequest? request = new()
-            {
-                CountryName = "Pakistan"
-            };
+            CountryAddRequest? request = _fixture.Create<CountryAddRequest>();
             //Act
             CountryResponse countryResponse = await _countryService.AddCountry(request);
             List<CountryResponse> allCountries = await _countryService.GetAllCountries();
@@ -115,9 +118,9 @@ namespace xUnitTests
             List<CountryResponse> country_list_while_calling_getAllCountries = new();
             List<CountryAddRequest> countryAddRequests = new() 
             {
-                new() {CountryName = "Bangladesh"},
-                new() {CountryName = "Pakistan"},
-                new() {CountryName = "Afganistan"}
+                _fixture.Create<CountryAddRequest>(),
+                _fixture.Create<CountryAddRequest>(),
+                _fixture.Create<CountryAddRequest>()
             };
 
             //act
@@ -152,10 +155,7 @@ namespace xUnitTests
         public async Task GetCountryByCountryId_AppropriateCountryById()
         {
             //Arrange
-            CountryAddRequest countryAddRequest = new()
-            {
-                CountryName = "Bangladesh"
-            };
+            CountryAddRequest countryAddRequest = _fixture.Create<CountryAddRequest>();
             CountryResponse countryResponse = await _countryService.AddCountry(countryAddRequest);
 
             //Act

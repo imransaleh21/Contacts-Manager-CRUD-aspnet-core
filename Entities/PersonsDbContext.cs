@@ -8,8 +8,8 @@ namespace Entities
         public PersonsDbContext(DbContextOptions options) : base(options)
         {
         }
-        public DbSet<Country> Countries { get; set; }
-        public DbSet<Person> Persons { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> Persons { get; set; }
 
         /// <summary>
         /// OnModelCreating is overridden from DbContext class and is used to configure the model
