@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
+using FluentAssertions;
 
 namespace xUnitTests
 {
@@ -90,10 +91,11 @@ namespace xUnitTests
         public async Task AddPerson_NullRequest()
         {
             //Arrange
-            PersonAddRequest request = null;
+            PersonAddRequest? request = null;
 
             //Assert with Act
-            await Assert.ThrowsAsync<ArgumentNullException>(async () => await _personsService.AddPerson(request));
+            Func<Task> action = async () => await _personsService.AddPerson(request);
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
@@ -106,7 +108,8 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            await Assert.ThrowsAsync<ArgumentException>(async () => await _personsService.AddPerson(request));
+            Func<Task> action = async () => await _personsService.AddPerson(request);
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
@@ -119,7 +122,8 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            await Assert.ThrowsAsync<ArgumentException>(async () => await _personsService.AddPerson(request));
+            Func<Task> action = async () => await _personsService.AddPerson(request);
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
@@ -132,7 +136,8 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            await Assert.ThrowsAsync<ArgumentException>(async () => await _personsService.AddPerson(request));
+            Func<Task> action = async () => await _personsService.AddPerson(request);
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
@@ -149,8 +154,8 @@ namespace xUnitTests
             List<PersonResponse> personResponseList = await _personsService.GetAllPersons();
 
             //Assert
-            Assert.True(personResponse.PersonId != Guid.Empty);
-            Assert.Contains(personResponse, personResponseList);
+            personResponse.PersonId.Should().NotBe(Guid.Empty);
+            personResponseList.Should().Contain(personResponse);
         }
         #endregion
 
@@ -162,7 +167,8 @@ namespace xUnitTests
             Guid? PersonId = null;
 
             //Assert with Act
-            Assert.Null(await _personsService.GetPersonByPersonId(PersonId));
+            PersonResponse? result = await _personsService.GetPersonByPersonId(PersonId);
+            result.Should().BeNull();
         }
 
         [Fact]
@@ -170,9 +176,9 @@ namespace xUnitTests
         {
             //Arrange
             CountryAddRequest request = _fixture.Create<CountryAddRequest>();
-            CountryResponse countryResponse =  await _countriesService.AddCountry(request);
+            CountryResponse countryResponse = await _countriesService.AddCountry(request);
             PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
-                .With(temp => temp.Email, "abc@gmail,bd")
+                .With(temp => temp.Email, "abc@gmail.com")
                 .With(temp => temp.DateOfBirth, DateTime.Parse("1990-05-21"))
                 .With(temp => temp.CountryId, countryResponse.CountryID)
                 .Create();
@@ -184,6 +190,7 @@ namespace xUnitTests
             PersonResponse? getPersonResponseById = await _personsService.GetPersonByPersonId(personId);
 
             //Assert
+            // fluent assertion gives error in comparing two PersonResponse objects
             Assert.Equal(getPersonResponseById, personAddResponse);
         }
         #endregion
@@ -192,8 +199,10 @@ namespace xUnitTests
         [Fact]
         public async Task GetAllPersons_EmptyPersonList()
         {
-            //Assert with Act
-            Assert.Empty(await _personsService.GetAllPersons());
+            //Act
+            var persons = await _personsService.GetAllPersons();
+            //Assert
+            persons.Should().BeEmpty();
         }
 
         [Fact]
@@ -201,14 +210,12 @@ namespace xUnitTests
         {
             //Arrange
             List<PersonResponse> personResponsesWhileAdding = await CreatePersonList();
-
             //Act
             List<PersonResponse> personResponsesWhileGettingAllPerson = await _personsService.GetAllPersons();
-
             //Assert
-            foreach (PersonResponse personResponse in personResponsesWhileAdding)
+            foreach (var personDetails in personResponsesWhileAdding)
             {
-                Assert.Contains(personResponse, personResponsesWhileGettingAllPerson);
+                personResponsesWhileGettingAllPerson.Should().Contain(personDetails);
             }
         }
         #endregion
@@ -224,9 +231,8 @@ namespace xUnitTests
             List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
 
             //Assert
-            foreach (PersonResponse personResponse in personResponsesWhileAdding)
-            {
-                Assert.Contains(personResponse, filteredPersonResponse);
+            foreach (var personDetails in personResponsesWhileAdding) {
+                filteredPersonResponse.Should().Contain(personDetails);
             }
         }
 
@@ -240,14 +246,8 @@ namespace xUnitTests
             List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ra");
 
             //Assert
-            foreach (PersonResponse personResponse in personResponsesWhileAdding)
-            {
-                if (personResponse.PersonName != null &&
-                    personResponse.PersonName.Contains("ra", StringComparison.OrdinalIgnoreCase))
-                {
-                    Assert.Contains(personResponse, filteredPersonResponse);
-                }
-            }
+            filteredPersonResponse.Should().OnlyContain(pr =>
+            pr.PersonName.Contains("ra", StringComparison.OrdinalIgnoreCase));
         }
         #endregion
     }

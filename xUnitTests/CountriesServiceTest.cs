@@ -6,6 +6,7 @@ using Services;
 using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
+using FluentAssertions;
 
 namespace xUnitTests
 {
@@ -32,14 +33,9 @@ namespace xUnitTests
         {
             //Arrange
             CountryAddRequest? request = null;
-
-            //Assert
-            await Assert.ThrowsAsync< ArgumentNullException>(async ()=>
-            {
-                //Act
-                await _countryService.AddCountry(request);
-            });
-
+            //Assert with Act
+            Func<Task> action = async () => await _countryService.AddCountry(request);
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
         //When CountryName is null or empty, it should throw an ArgumentException
         [Fact]
@@ -50,12 +46,8 @@ namespace xUnitTests
                                                     .With(country => country.CountryName, null as string)
                                                     .Create();
             //Assert
-            await Assert.ThrowsAsync<ArgumentException>(async() =>
-            {
-                //Act
-                await _countryService.AddCountry(request);
-            });
-
+            Func<Task> action = async () => await _countryService.AddCountry(request);
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         //When CountryName is Duplicate, it should throw an ArgumentException
@@ -71,13 +63,14 @@ namespace xUnitTests
                 .Create();
 
             //Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            Func<Task> action = async () =>
             {
                 //Act
                 await _countryService.AddCountry(request1);
                 await _countryService.AddCountry(request2);
 
-            });
+            };
+            await action.Should().ThrowAsync<ArgumentException>();
 
         }
 
@@ -106,7 +99,7 @@ namespace xUnitTests
             List<CountryResponse> actual_country_response_list = await _countryService.GetAllCountries();
 
             //assert
-            Assert.Empty(actual_country_response_list);
+            actual_country_response_list.Should().BeEmpty();
         }
 
         // When Country list is not empty, It will return a list of countries
@@ -116,26 +109,20 @@ namespace xUnitTests
             //arrange
             List<CountryResponse> country_list_while_adding_countries = new();
             List<CountryResponse> country_list_while_calling_getAllCountries = new();
-            List<CountryAddRequest> countryAddRequests = new() 
+            List<CountryAddRequest> countryAddRequests = new()
             {
                 _fixture.Create<CountryAddRequest>(),
                 _fixture.Create<CountryAddRequest>(),
                 _fixture.Create<CountryAddRequest>()
             };
-
             //act
-            foreach (var countryRequest in countryAddRequests) 
+            foreach (var countryRequest in countryAddRequests)
             {
-                country_list_while_adding_countries.Add( await _countryService.AddCountry(countryRequest));
+                country_list_while_adding_countries.Add(await _countryService.AddCountry(countryRequest));
             }
             country_list_while_calling_getAllCountries = await _countryService.GetAllCountries();
-
             //assert
-            //Check if the country list while adding countries is same as the country list while calling GetAllCountries
-            foreach (var expected_country in country_list_while_adding_countries)
-            {
-                Assert.Contains(expected_country, country_list_while_calling_getAllCountries);
-            }
+            country_list_while_calling_getAllCountries.Should().BeEquivalentTo(country_list_while_adding_countries);
         }
         #endregion
         #region GetCountryByCountryId Tests
@@ -147,7 +134,8 @@ namespace xUnitTests
             Guid? countryId = null;
 
             //Assert with Act
-            Assert.Null(await _countryService.GetCountryByCountryId(countryId));
+            var result = await _countryService.GetCountryByCountryId(countryId);
+            result.Should().BeNull();
         }
 
         // When Appropriate CountryId is Found, it should return the appropriate Country
@@ -162,8 +150,7 @@ namespace xUnitTests
             CountryResponse? countryById = await _countryService.GetCountryByCountryId(countryResponse.CountryID);
 
             //Assert
-            Assert.Equal(countryById, countryResponse);
-
+            countryById.Should().BeEquivalentTo(countryResponse);
         }
         #endregion
     }

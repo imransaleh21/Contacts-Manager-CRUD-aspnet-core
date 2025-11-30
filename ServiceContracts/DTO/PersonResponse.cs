@@ -45,7 +45,9 @@ namespace ServiceContracts.DTO
                 DateOfBirth == personToCompare.DateOfBirth &&
                 Gender == personToCompare.Gender &&
                 CountryId == personToCompare.CountryId &&
-                Address == personToCompare.Address;
+                Address == personToCompare.Address &&
+                Country == personToCompare.Country &&
+                ReceiveNewsLettter == personToCompare.ReceiveNewsLettter;
         }
 
         /// <summary>
