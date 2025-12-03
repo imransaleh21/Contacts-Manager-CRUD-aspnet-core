@@ -253,7 +253,7 @@ namespace Services
 
             /*
              * As person info is found(not null), So, person info of that person id is found,
-             * now we can update the Person info that person
+             * now we can update the Person info of that person
              * here as matchedPerson is already being tracked by EF Core,
              * so no need to call _db.Persons.Update(matchedPerson) method
             */
