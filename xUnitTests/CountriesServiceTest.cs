@@ -7,22 +7,27 @@ using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
 using FluentAssertions;
+using RepositoryContracts;
+using Repository;
 
 namespace xUnitTests
 {
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countryService;
+        private readonly ICountriesRepository _countriesRepository;
         private readonly IFixture _fixture;
         public CountriesServiceTest()
         {
-            // This shows the 
+            // This shows the initial setup for mocking the DbContext and DbSet
             var countriesInitialData = new List<Country>() { };
             DbContextMock<PersonsDbContext> dbContextMock = new DbContextMock<PersonsDbContext>(
                 new DbContextOptionsBuilder<PersonsDbContext>().Options);
+
             PersonsDbContext dbContext = dbContextMock.Object;
             dbContextMock.CreateDbSetMock(dbSet => dbSet.Countries, countriesInitialData);
-            _countryService = new CountriesService(dbContext);
+            _countriesRepository = new CountriesRepository(dbContext);
+            _countryService = new CountriesService(_countriesRepository);
             _fixture = new Fixture();
         }
 

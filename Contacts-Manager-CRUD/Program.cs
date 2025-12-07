@@ -1,12 +1,16 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using RepositoryContracts;
+using Repository;
 using ServiceContracts;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 // Registering services for dependency injection
+builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonsService, PersonsService>();
 

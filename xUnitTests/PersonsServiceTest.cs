@@ -9,14 +9,17 @@ using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
 using FluentAssertions;
+using RepositoryContracts;
+using Repository;
 
 namespace xUnitTests
 {
     public class PersonsServiceTest
     {
-
-        private readonly ICountriesService _countriesService;
         private readonly IPersonsService _personsService;
+        private readonly IPersonsRepository _personsRepository;
+        private readonly ICountriesService _countriesService;
+
         private readonly IFixture _fixture;
 
         public PersonsServiceTest()
@@ -32,8 +35,9 @@ namespace xUnitTests
             dbContextMock.CreateDbSetMock(dbSet => dbSet.Persons, personsInitialData);
             dbContextMock.CreateDbSetMock(dbSet => dbSet.Countries, countriesInitialData);
 
-            _countriesService = new CountriesService(dbContext);
-            _personsService = new PersonsService(dbContext, _countriesService);
+            _personsRepository = new PersonsRepository(dbContext);
+            _personsService = new PersonsService(_personsRepository);
+            _countriesService = new CountriesService(new CountriesRepository(dbContext));
         }
 
         #region CreatePersonList

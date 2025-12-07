@@ -50,10 +50,14 @@ namespace Repository
 
         public async Task<Person> UpdatePerson(Person person)
         {
-            Person? matchedPerson = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == person.PersonId);
+            Person? matchedPerson = await GetPersonByPersonId(person.PersonId);
             _db.Persons.Update(person);
-            if(matchedPerson == null) return person;
-
+            /*
+             * As person info is found(not null), So, person info of that person id is found,
+             * now we can update the Person info of that person
+             * here as matchedPerson is already being tracked by EF Core,
+             * so no need to call _db.Persons.Update(matchedPerson) method
+            */
             matchedPerson.PersonName = person.PersonName;
             matchedPerson.Email = person.Email;
             matchedPerson.DateOfBirth = person.DateOfBirth;
