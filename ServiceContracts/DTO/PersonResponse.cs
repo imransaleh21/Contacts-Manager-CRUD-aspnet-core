@@ -7,7 +7,7 @@ namespace ServiceContracts.DTO
     /// <summary>
     /// This DTO is used for representing a person response in most of the Person Service methods.
     /// </summary>
-    public class PersonResponse : IEquatable<PersonResponse>
+    public class PersonResponse //: IEquatable<PersonResponse>
     {
         public Guid PersonId { get; set; }
         public string? PersonName { get; set; }
@@ -20,45 +20,47 @@ namespace ServiceContracts.DTO
         public string? Address { get; set; }
         public bool? ReceiveNewsLettter { get; set; }
 
+        #region Commented as we use mock testing for PersonService tests
         /// <summary>
         /// Determines whether the specified object is equal to the current PersonResponse instance.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object? obj)
-        {
-            return base.Equals(obj as PersonResponse);
-        }
+        //public override bool Equals(object? obj)
+        //{
+        //    return Equals(obj as PersonResponse);
+        //}
 
         /// <summary>
         /// Determines whether the specified PersonResponse is equal to the current instance.
         /// </summary>
         /// <param name="personToCompare"></param>
         /// <returns></returns>
-        public bool Equals(PersonResponse? personToCompare)
-        {
-            if (personToCompare == null) return false;
+        //public bool Equals(PersonResponse? personToCompare)
+        //{
+        //    if (personToCompare == null) return false;
 
-            return PersonId == personToCompare.PersonId &&
-                PersonName == personToCompare.PersonName &&
-                Email == personToCompare.Email &&
-                DateOfBirth == personToCompare.DateOfBirth &&
-                Gender == personToCompare.Gender &&
-                CountryId == personToCompare.CountryId &&
-                Address == personToCompare.Address &&
-                Country == personToCompare.Country &&
-                ReceiveNewsLettter == personToCompare.ReceiveNewsLettter;
-        }
+        //    return PersonId == personToCompare.PersonId &&
+        //        PersonName == personToCompare.PersonName &&
+        //        Email == personToCompare.Email &&
+        //        DateOfBirth == personToCompare.DateOfBirth &&
+        //        Gender == personToCompare.Gender &&
+        //        CountryId == personToCompare.CountryId &&
+        //        Address == personToCompare.Address &&
+        //        Country == personToCompare.Country &&
+        //        ReceiveNewsLettter == personToCompare.ReceiveNewsLettter;
+        //}
 
         /// <summary>
         /// Returns a hash code for the current PersonResponse instance.
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        //public override int GetHashCode()
+        //{
+        //    return base.GetHashCode();
+        //}
 
+        #endregion
         /// <summary>
         /// Converts the current PersonResponse instance to a PersonUpdateRequest DTO.
         /// </summary>

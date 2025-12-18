@@ -13,7 +13,7 @@ namespace ServiceContracts.DTO
         public string? CountryName { get; set; }
 
         public Country ToCountry() { 
-            return new Country { CountryName = CountryName }; 
+            return new Country() { CountryName = CountryName }; 
         }
     }
 }

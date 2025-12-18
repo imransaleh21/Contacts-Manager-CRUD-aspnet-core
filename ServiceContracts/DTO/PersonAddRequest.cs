@@ -28,7 +28,7 @@ namespace ServiceContracts.DTO
         //Convert the PersonAddRequest Object to Person Object
         public Person ToPerson()
         {
-            return new()
+            return new Person()
             {
                 PersonName = PersonName,
                 Email = Email,
