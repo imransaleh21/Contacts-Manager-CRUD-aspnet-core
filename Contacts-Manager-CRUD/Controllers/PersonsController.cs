@@ -80,7 +80,7 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpPost]
-        public async Task<IActionResult> Create(PersonAddRequest person)
+        public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
         {
             // This action method is used to handle the form submission for creating a new person
             if (!ModelState.IsValid)
@@ -89,11 +89,11 @@ namespace Contacts_Manager_CRUD.Controllers
                 ViewBag.Countries = countryList;
                 ViewBag.Errors = ModelState.Values.SelectMany(error =>  error.Errors)
                     .Select(errorMessages => errorMessages.ErrorMessage).ToList();
-                return View();
+                return View(personAddRequest);
             }
 
             // If the model state is valid, add the person using the service
-            PersonResponse newPerson = await _personsService.AddPerson(person);
+            PersonResponse newPerson = await _personsService.AddPerson(personAddRequest);
             // After adding the person, redirect to the Index action method to display the updated list of persons
             return RedirectToAction("Index", "Persons");
         }

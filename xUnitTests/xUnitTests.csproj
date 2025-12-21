@@ -22,10 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RepositoryContracts\RepositoryContracts.csproj" />
-    <ProjectReference Include="..\Repository\Repository.csproj" />
-    <ProjectReference Include="..\ServiceContracts\ServiceContracts.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\Contacts-Manager-CRUD\Contacts-Manager-CRUD.csproj" />
   </ItemGroup>
 
   <ItemGroup>
