@@ -14,14 +14,19 @@ builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonsService, PersonsService>();
 
-// Registering DbContext with SQL Server
-builder.Services.AddDbContext<PersonsDbContext>
-    (options =>{
+if (builder.Environment.IsEnvironment("Testing") == false)
+{
+    // Registering DbContext with SQL Server
+    builder.Services.AddDbContext<PersonsDbContext>
+    (options =>
+    {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); // Connection string from appsettings.json
     });
-// Setting the EPPlus license context for non-commercial use to generate Excel files
-ExcelPackage.License.SetNonCommercialPersonal("Imran88");
-
+    // Setting the EPPlus license context for non-commercial use to generate Excel files
+    ExcelPackage.License.SetNonCommercialPersonal("Imran88");
+    // Configuring Rotativa for PDF generation from views(HTML)
+    Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
+}
 // Building the app
 var app = builder.Build();
 
@@ -29,10 +34,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
-// Configuring Rotativa for PDF generation from views(HTML)
-Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath:"Rotativa");
+
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
 app.Run();
+
+// To make the Compiler generate the Program class as partial for integration tests
+public partial class Program { }
