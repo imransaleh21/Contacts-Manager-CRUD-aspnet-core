@@ -216,10 +216,10 @@ The test suite includes:
 The application uses EPPlus for Excel generation. The license is set to non-commercial personal use in `Program.cs`:
 
 ```csharp
-ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+ExcelPackage.License.SetNonCommercialPersonal("Imran88");
 ```
 
-For commercial use, update the license accordingly.
+For commercial use, update the license configuration accordingly.
 
 ### Rotativa PDF Configuration
 Rotativa is configured for PDF generation. The wkhtmltopdf binaries should be in the `wwwroot/Rotativa` folder.
