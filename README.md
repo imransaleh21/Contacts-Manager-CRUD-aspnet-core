@@ -304,8 +304,9 @@ The application uses Razor views with:
 ### EPPlus License
 Non-commercial license configured in `Program.cs`:
 ```csharp
-ExcelPackage.License.SetNonCommercialPersonal("Imran88");
+ExcelPackage.License.SetNonCommercialPersonal("<YourName>");
 ```
+**Note**: Replace `<YourName>` with your actual name/identifier for non-commercial use.
 
 ### Rotativa Configuration
 PDF generation configured with wkhtmltopdf:
