@@ -26,7 +26,7 @@ This application provides a full-featured contact management system with Create,
 - **Entity Framework Core**: Code-first approach with migrations
 - **Stored Procedures**: Custom SQL Server stored procedures for complex operations
 - **Fluent API**: Advanced entity configuration with constraints and relationships
-- **Custom Validations**: Age validation (minimum 18 years) and other business rules
+- **Custom Validations**: Add validation and other business rules
 
 ## 🏗️ Architecture
 
@@ -76,11 +76,7 @@ xUnitTests/                     # Test Layer
 ## 🛠️ Technology Stack
 
 ### Core Technologies
-- **.NET 8.0**: Latest LTS version of .NET
-- **ASP.NET Core MVC**: Model-View-Controller web framework
-- **C# 12**: Modern C# with nullable reference types enabled
-- **Entity Framework Core 9.0.8**: ORM for data access
-- **SQL Server**: Relational database (LocalDB for development)
+**.NET 8.0**, **ASP.NET Core MVC**, **C# 12**, **Entity Framework Core**, **SQL Server**
 
 ### NuGet Packages
 
@@ -127,7 +123,6 @@ xUnitTests/                     # Test Layer
 - **Data Seeding**: Initial data from JSON files
 
 ### Advanced Techniques
-
 #### Reflection-Based Sorting
 Instead of lengthy switch statements, the application uses reflection for dynamic property sorting:
 ```csharp
@@ -137,21 +132,14 @@ var sortByProperty = typeof(PersonResponse).GetProperty(sortBy,
 ```
 **Benefits**: More maintainable, works with new properties without code changes
 
-#### Expression Trees for Filtering
-Repository uses expression trees for flexible, composable queries:
-```csharp
-Task<List<Person>> GetFilteredPersons(Expression<Func<Person, bool>> predicate);
-```
-
 #### Custom Validation Attributes
 Custom `DateCheckerAttribute` ensures users are at least 18 years old:
 ```csharp
 [DateChecker] // Validates minimum age requirement
 public DateTime? DateOfBirth { get; set; }
 ```
-
 #### Validation Helper
-Centralized model validation using `ValidationHelper` class for consistent error handling across services.
+Centralized model validation using the `ValidationHelper` class for consistent error handling across services.
 
 ### Testing Strategy
 
@@ -205,12 +193,6 @@ The application includes multiple migrations demonstrating database evolution:
 - `InsertPerson`: Inserts a new person record
 
 ## 🚀 Getting Started
-
-### Prerequisites
-- .NET 8.0 SDK or later
-- SQL Server (LocalDB is included with Visual Studio)
-- Visual Studio 2022 or VS Code (optional)
-
 ### Installation
 
 1. **Clone the repository**
@@ -320,30 +302,7 @@ Services registered in `Program.cs`:
 - DbContext with SQL Server provider
 - Repository implementations
 - Service implementations
-
-## 🧪 Code Highlights
-
-### Nullable Reference Types
-Enabled throughout the project for better null safety:
-```xml
-<Nullable>enable</Nullable>
-```
-
-### InternalsVisibleTo
-Test project has access to internal members:
-```xml
-<InternalsVisibleTo Include="xUnitTests" />
-```
-
-### Partial Program Class
-Enables integration testing:
-```csharp
-public partial class Program { }
-```
-
-### Data Seeding
-Countries and persons seeded from JSON files in `OnModelCreating`.
-
+- 
 ## 📚 Learning Outcomes
 
 This project demonstrates:
@@ -359,14 +318,8 @@ This project demonstrates:
 - Stored procedure integration
 - Database migrations and seeding
 
-## 📝 License
-
-This project is for educational purposes.
-
 ## 🤝 Contributing
-
 This is a learning project. Feel free to fork and experiment with your own enhancements.
 
 ---
-
 Built with ASP.NET Core 8.0 MVC
