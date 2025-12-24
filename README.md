@@ -215,9 +215,10 @@ The application includes multiple migrations demonstrating database evolution:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/imransaleh21/Contacts-Manager-CRUD-aspnet-core.git
+   git clone https://github.com/<your-username>/Contacts-Manager-CRUD-aspnet-core.git
    cd Contacts-Manager-CRUD-aspnet-core
    ```
+   **Note**: Replace `<your-username>` with the actual repository owner's username.
 
 2. **Restore dependencies**
    ```bash
