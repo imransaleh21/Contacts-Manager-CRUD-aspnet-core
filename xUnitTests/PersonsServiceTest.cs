@@ -12,6 +12,7 @@ using FluentAssertions;
 using RepositoryContracts;
 using Repository;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 
 namespace xUnitTests
 {
@@ -20,6 +21,7 @@ namespace xUnitTests
         private readonly IPersonsService _personsService;
         private readonly IPersonsRepository _personsRepository;
         private readonly Mock<IPersonsRepository> _personsRepositoryMock;
+        private readonly Mock<ILogger<PersonsService>> _loggerMock;
 
         private readonly IFixture _fixture;
 
@@ -27,8 +29,9 @@ namespace xUnitTests
         {
             _fixture = new Fixture();
             _personsRepositoryMock = new Mock<IPersonsRepository>();
+            _loggerMock = new Mock<ILogger<PersonsService>>();
             _personsRepository = _personsRepositoryMock.Object;
-            _personsService = new PersonsService(_personsRepository);
+            _personsService = new PersonsService(_personsRepository, _loggerMock.Object);
         }
 
         #region CreatePersonList

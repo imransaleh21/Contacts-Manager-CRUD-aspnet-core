@@ -2,10 +2,12 @@
 using Contacts_Manager_CRUD.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
+using Services;
 using System.Threading.Tasks;
 
 namespace xUnitTests
@@ -18,6 +20,7 @@ namespace xUnitTests
         private readonly Mock<IPersonsService> _personsServiceMock;
         private readonly Mock<ICountriesService> _countriesServiceMock;
 
+        private readonly Mock<ILogger<PersonsController>> _loggerMock;
         private readonly Fixture _fixture;
         public PersonsControllerTest()
         {
@@ -26,6 +29,7 @@ namespace xUnitTests
             _personsService = _personsServiceMock.Object;
             _countriesServiceMock = new Mock<ICountriesService>();
             _countriesService = _countriesServiceMock.Object;
+            _loggerMock = new Mock<ILogger<PersonsController>>();
         }
 
         #region Index Controller Tests
@@ -34,7 +38,7 @@ namespace xUnitTests
         {
             //Arrange
             List<PersonResponse> personResponses = _fixture.Create<List<PersonResponse>>();
-            PersonsController personsController = new(_personsService, _countriesService);
+            PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
 
             _personsServiceMock.Setup(_personsServiceMock => 
             _personsServiceMock.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>()))
@@ -66,7 +70,7 @@ namespace xUnitTests
             _countriesServiceMock.Setup(_countriesServiceMock => _countriesServiceMock.GetAllCountries())
                 .ReturnsAsync(countryResponses);
 
-            PersonsController personsController = new(_personsService, _countriesService);
+            PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
 
             //Act
             personsController.ModelState.AddModelError("PersonName", "Person Name is required");
@@ -90,7 +94,7 @@ namespace xUnitTests
             _countriesServiceMock.Setup(_countriesServiceMock => _countriesServiceMock.GetAllCountries())
                 .ReturnsAsync(countryResponses);
 
-            PersonsController personsController = new(_personsService, _countriesService);
+            PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
 
             //Act
             IActionResult result = await personsController.Create(personAddRequest);
