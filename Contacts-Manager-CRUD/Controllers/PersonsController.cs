@@ -13,11 +13,14 @@ namespace Contacts_Manager_CRUD.Controllers
     {
         private readonly IPersonsService _personsService;
         private readonly ICountriesService _countriesService;
+        private readonly ILogger<PersonsController> _logger;
         public PersonsController(IPersonsService personsService,
-            ICountriesService countriesService)
+            ICountriesService countriesService,
+            ILogger<PersonsController> logger)
         {
             _personsService = personsService;
             _countriesService = countriesService;
+            _logger = logger;
         }
         /// <summary>
         /// Index action method for the PersonsController. This will return the view of a list of persons based on different criteria
@@ -29,6 +32,7 @@ namespace Contacts_Manager_CRUD.Controllers
         public async Task<IActionResult> Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
+            _logger.LogInformation($"Index Controller. Param: searchBy: {searchBy}, searchValue: {searchValue}, sortBy: {sortBy}, sortOrder: {sortOrder}");
             // Code for searching persons based on the search criteria
             ViewBag.SearchField = new Dictionary<string, string>
             {

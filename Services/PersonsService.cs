@@ -9,16 +9,19 @@ using ServiceContracts.Enums;
 using Services.Helpers;
 using OfficeOpenXml;
 using RepositoryContracts;
+using Microsoft.Extensions.Logging;
 
 namespace Services
 {
     public class PersonsService : IPersonsService
     {
         private readonly IPersonsRepository _personsRepository;
+        private readonly ILogger<PersonsService> _logger;
 
-        public PersonsService(IPersonsRepository personsRepository)
+        public PersonsService(IPersonsRepository personsRepository, ILogger<PersonsService> logger)
         {
             _personsRepository = personsRepository;
+            _logger = logger;
         }
         /// <summary>
         /// Adds a new person object to the list of persons.
@@ -29,7 +32,9 @@ namespace Services
         /// <exception cref="ArgumentException"></exception>
         public async Task<PersonResponse> AddPerson(PersonAddRequest? addPerson)
         {
-            if(addPerson == null) throw new ArgumentNullException(nameof(addPerson));
+            _logger.LogInformation("AddPerson method");
+
+            if (addPerson == null) throw new ArgumentNullException(nameof(addPerson));
             // Add model validation for any validation error
             ValidationHelper.ValidateTheModelObject(addPerson);
 
@@ -71,7 +76,8 @@ namespace Services
         /// <returns>Return person details</returns>
         public async Task<PersonResponse?> GetPersonByPersonId(Guid? personId)
         {
-            if(personId == null) return null;
+            _logger.LogInformation($"GetPersonByPersonId method Param: {personId}");
+            if (personId == null) return null;
             Person? person = await _personsRepository.GetPersonByPersonId(personId.Value);
 
             return person?.ToPersonResponse()??null;
@@ -86,6 +92,7 @@ namespace Services
         /// <returns>It return the list of PersonResponse</returns>
         public async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchValue)
         {
+
             List<Person> matchingPersons = searchBy switch
             {
                 nameof(PersonResponse.PersonName) => await _personsRepository.GetFilteredPersons(person =>
