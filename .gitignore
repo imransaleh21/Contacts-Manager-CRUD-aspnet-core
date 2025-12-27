@@ -38,3 +38,6 @@ iisexpress/
 # Other system files
 Thumbs.db
 .DS_Store
+
+#Serilog Log
+**/Logs/

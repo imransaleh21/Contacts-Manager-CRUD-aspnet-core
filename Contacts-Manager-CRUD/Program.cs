@@ -5,8 +5,18 @@ using RepositoryContracts;
 using Repository;
 using ServiceContracts;
 using Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuring Serilog as the logging provider
+builder.Host.UseSerilog( (HostBuilderContext context,
+    IServiceProvider services,
+    LoggerConfiguration configuration) =>{
+        configuration.ReadFrom.Configuration(context.Configuration) // Read configuration from appsettings.json by using IConfiguration
+        .ReadFrom.Services(services); // Read current services and make them available to Serilog
+    });
+
 builder.Services.AddControllersWithViews();
 // Registering services for dependency injection
 builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
