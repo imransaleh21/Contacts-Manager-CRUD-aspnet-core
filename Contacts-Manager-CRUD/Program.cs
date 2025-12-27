@@ -6,6 +6,7 @@ using Repository;
 using ServiceContracts;
 using Services;
 using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
