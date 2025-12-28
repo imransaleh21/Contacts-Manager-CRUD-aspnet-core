@@ -81,7 +81,7 @@ namespace Services
             if (personId == null) return null;
             Person? person = await _personsRepository.GetPersonByPersonId(personId.Value);
 
-            return person?.ToPersonResponse()??null;
+            return person?.ToPersonResponse() ?? null;
         }
 
         /// <summary>
@@ -96,28 +96,37 @@ namespace Services
             List<Person> matchingPersons = new();
             using (Operation.Time("Time to Get Filtered Persons"))
             {
-                matchingPersons = searchBy switch
+                // For DateOfBirth, we need to filter in-memory since ToString() can't be translated
+                if (searchBy == nameof(PersonResponse.DateOfBirth))
                 {
-                    nameof(PersonResponse.PersonName) => await _personsRepository.GetFilteredPersons(person =>
-                        person.PersonName.Contains(searchValue)),
+                    var allPersons = await _personsRepository.GetAllPersons();
+                    matchingPersons = allPersons
+                        .Where(person => person.DateOfBirth.HasValue &&
+                               person.DateOfBirth.Value.ToString("dd MMMM yy").Contains(searchValue ?? string.Empty))
+                        .ToList();
+                }
+                else
+                {
+                    matchingPersons = searchBy switch
+                    {
+                        nameof(PersonResponse.PersonName) => await _personsRepository.GetFilteredPersons(person =>
+                            person.PersonName.Contains(searchValue)),
 
-                    nameof(PersonResponse.Email) => await _personsRepository.GetFilteredPersons(person =>
-                        person.Email.Contains(searchValue)),
+                        nameof(PersonResponse.Email) => await _personsRepository.GetFilteredPersons(person =>
+                            person.Email.Contains(searchValue)),
 
-                    nameof(PersonResponse.DateOfBirth) => await _personsRepository.GetFilteredPersons(person =>
-                        person.DateOfBirth.Value.ToString("dd MMMM yy").Contains(searchValue)),
+                        nameof(PersonResponse.Gender) => await _personsRepository.GetFilteredPersons(person =>
+                            person.Gender.Contains(searchValue)),
 
-                    nameof(PersonResponse.Gender) => await _personsRepository.GetFilteredPersons(person =>
-                        person.Gender.Contains(searchValue)),
+                        nameof(PersonResponse.CountryId) => await _personsRepository.GetFilteredPersons(person =>
+                            person.Country.CountryName.Contains(searchValue)),
 
-                    nameof(PersonResponse.CountryId) => await _personsRepository.GetFilteredPersons(person =>
-                        person.Country.CountryName.Contains(searchValue)),
+                        nameof(PersonResponse.Address) => await _personsRepository.GetFilteredPersons(person =>
+                            person.Address.Contains(searchValue)),
 
-                    nameof(PersonResponse.Address) => await _personsRepository.GetFilteredPersons(person =>
-                        person.Address.Contains(searchValue)),
-
-                    _ => await _personsRepository.GetAllPersons()
-                };
+                        _ => await _personsRepository.GetAllPersons()
+                    };
+                }
             }
             return matchingPersons.Select(p => p.ToPersonResponse()).ToList();
         }
@@ -131,7 +140,7 @@ namespace Services
         /// <returns>The sorted person list</returns>
         public List<PersonResponse>? GetSortedPersons(List<PersonResponse> personList, string sortBy, SortOrderOptions sortOrder)
         {
-            if(string.IsNullOrEmpty(sortBy)) return personList;
+            if (string.IsNullOrEmpty(sortBy)) return personList;
 
             // Use a switch expression to sort the personList based on the sortBy and sortOrder parameters
             //List<PersonResponse> sortedPersonsList = (sortBy, sortOrder)
@@ -190,7 +199,7 @@ namespace Services
             */
             // Get the property info for the sortBy Field
             var sortByProperty = typeof(PersonResponse).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            if(sortByProperty  == null) return personList;
+            if (sortByProperty == null) return personList;
 
             // Check if the property type is string
             bool isStringProperty = sortByProperty.PropertyType == typeof(string);
@@ -221,7 +230,7 @@ namespace Services
                     sortedPersonsList = personList.OrderByDescending(p => sortByProperty.GetValue(p));
                 }
             }
-                return sortedPersonsList.ToList();
+            return sortedPersonsList.ToList();
         }
 
         /// <summary>
