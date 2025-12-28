@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Contacts_Manager_CRUD.Filters.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 using Rotativa.AspNetCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -29,20 +30,11 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("[action]")] // This route is work same as the below one
         //[Route("index")]
         [Route("/")]
+        [TypeFilter(typeof(PersonsListActionFilter))]
         public async Task<IActionResult> Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
             _logger.LogInformation($"Index Controller. Param: searchBy: {searchBy}, searchValue: {searchValue}, sortBy: {sortBy}, sortOrder: {sortOrder}");
-            // Code for searching persons based on the search criteria
-            ViewBag.SearchField = new Dictionary<string, string>
-            {
-                { nameof(PersonResponse.PersonName),  "Person Name" },
-                { nameof(PersonResponse.Email), "Email"},
-                { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
-                { nameof(PersonResponse.Gender), "Gender"},
-                { nameof(PersonResponse.CountryId), "Country"},
-                { nameof(PersonResponse.Address), "Address"}
-            };
             // Retrieve all persons from the service
             // as filtered person method returns all persons if no search criteria is provided
             // so this code is now commented
@@ -52,13 +44,17 @@ namespace Contacts_Manager_CRUD.Controllers
             // based on the search criteria, filtered persons will be returned
             // and if no search criteria is provided, all persons will be returned
             List<PersonResponse> persons = await _personsService.GetFilteredPersons(searchBy, searchValue);
-            ViewBag.CurrentSearchBy = searchBy;
-            ViewBag.CurrentSearchValue = searchValue;
+
+            // This viewbag code is now moved to PersonsListActionFilter filter's onActionExecuted method
+            //ViewBag.CurrentSearchBy = searchBy;
+            //ViewBag.CurrentSearchValue = searchValue;
 
             // Code for sorting persons based on the sort criteria
             List<PersonResponse>? sortedPersons = _personsService.GetSortedPersons( persons, sortBy, sortOrder);
-            ViewBag.CurrentSortBy = sortBy;
-            ViewBag.CurrentSortOrder = sortOrder;
+
+            // This viewbag code is now moved to PersonsListActionFilter filter's onActionExecuted method
+            //ViewBag.CurrentSortBy = sortBy;
+            //ViewBag.CurrentSortOrder = sortOrder;
             return View(sortedPersons); // Return the view with the list of persons at Views/Persons/Index.cshtml
         }
 
