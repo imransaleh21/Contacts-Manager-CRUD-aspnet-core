@@ -19,7 +19,7 @@ namespace Contacts_Manager_CRUD.Filters.ActionFilters
         /// <param name="context"></param>
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.LogInformation("PersonsListActionFilter: OnActionExecuted method called");
+            _logger.LogInformation("{FilterName}.{MethodName} called", nameof(PersonsListActionFilter), nameof(OnActionExecuted));
             PersonsController personsController = (PersonsController)context.Controller;
             //The arguments were stored in HttpContext.Items in OnActionExecuting method
             IDictionary<string, object?>? actionArguments = (IDictionary<string, object?>?)context.HttpContext.Items["arguments"];
@@ -55,7 +55,7 @@ namespace Contacts_Manager_CRUD.Filters.ActionFilters
         /// <param name="context"></param>
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _logger.LogInformation("PersonsListActionFilter: OnActionExecuting method called");
+            _logger.LogInformation("{FilterName}.{MethodName} called", nameof(PersonsListActionFilter), nameof(OnActionExecuting));
             // Storing action arguments in HttpContext.Items for later use in the action method or other filters
             context.HttpContext.Items["arguments"] = context.ActionArguments;
             // Validate the searchBy parameter
@@ -76,7 +76,7 @@ namespace Contacts_Manager_CRUD.Filters.ActionFilters
                     // Reset the searchBy to PersonName
                     if (!searchOptions.Contains(searchBy))
                     {
-                        _logger.LogInformation($"PersonsListActionFilter: OnActionExecuting - Invalid searchBy: {searchBy}");
+                        _logger.LogInformation("{FilterName}.{MethodName} - Invalid {Field}: {value}", nameof(PersonsListActionFilter), nameof(OnActionExecuted), nameof(searchBy), searchBy);
                         context.ActionArguments["searchBy"] = nameof(PersonResponse.PersonName);
                     }
                 }

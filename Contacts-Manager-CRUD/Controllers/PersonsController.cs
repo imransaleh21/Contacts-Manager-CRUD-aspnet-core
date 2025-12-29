@@ -31,6 +31,7 @@ namespace Contacts_Manager_CRUD.Controllers
         //[Route("index")]
         [Route("/")]
         [TypeFilter(typeof(PersonsListActionFilter))]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]{"Index-Custom-key", "Custom-value"})]
         public async Task<IActionResult> Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
@@ -65,6 +66,7 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpGet]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Create-Custom-key", "Custom-value" })]
         public async Task<IActionResult> Create()
         {
             // This action method is used to render the Create view for adding a new person
