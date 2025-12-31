@@ -4,12 +4,12 @@ using Rotativa.AspNetCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
-using System.Threading.Tasks;
 
 namespace Contacts_Manager_CRUD.Controllers
 {
     [Route("[controller]")] // This is as same as [Route("persons")]
     //[Route("persons")]
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Controller-Custom-key", "Custom-value", 2 }, Order = 2)]
     public class PersonsController : Controller
     {
         private readonly IPersonsService _personsService;
@@ -30,8 +30,8 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("[action]")] // This route is work same as the below one
         //[Route("index")]
         [Route("/")]
-        [TypeFilter(typeof(PersonsListActionFilter))]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]{"Index-Custom-key", "Custom-value"})]
+        [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]{"Index-Custom-key", "Custom-value", 1}, Order = 1)]
         public async Task<IActionResult> Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
@@ -66,7 +66,7 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpGet]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Create-Custom-key", "Custom-value" })]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Create_Method-Custom-key", "Custom-value", 1 }, Order = 1)] // here order set which filter to execute first like method or class level
         public async Task<IActionResult> Create()
         {
             // This action method is used to render the Create view for adding a new person
@@ -82,18 +82,9 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpPost]
+        [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))] // validation or other pre-operations is done here
         public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
         {
-            // This action method is used to handle the form submission for creating a new person
-            if (!ModelState.IsValid)
-            {
-                List<CountryResponse> countryList = await  _countriesService.GetAllCountries();
-                ViewBag.Countries = countryList;
-                ViewBag.Errors = ModelState.Values.SelectMany(error =>  error.Errors)
-                    .Select(errorMessages => errorMessages.ErrorMessage).ToList();
-                return View(personAddRequest);
-            }
-
             // If the model state is valid, add the person using the service
             PersonResponse newPerson = await _personsService.AddPerson(personAddRequest);
             // After adding the person, redirect to the Index action method to display the updated list of persons

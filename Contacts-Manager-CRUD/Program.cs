@@ -7,6 +7,7 @@ using ServiceContracts;
 using Services;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using Contacts_Manager_CRUD.Filters.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,12 @@ builder.Host.UseSerilog( (HostBuilderContext context,
         .ReadFrom.Services(services); // Read current services and make them available to Serilog
     });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews( options => {
+    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+    options.Filters.Add(new ResponseHeaderActionFilter(logger, "Global-Custom-key", "Custom-value", 3));
+});
+
+
 // Registering services for dependency injection
 builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
