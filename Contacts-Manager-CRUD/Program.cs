@@ -20,6 +20,7 @@ builder.Host.UseSerilog( (HostBuilderContext context,
     });
 
 builder.Services.AddControllersWithViews( options => {
+    // Adding a global action filter to add custom headers to responses
     var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
     options.Filters.Add(new ResponseHeaderActionFilter(logger, "Global-Custom-key", "Custom-value", 3));
 });

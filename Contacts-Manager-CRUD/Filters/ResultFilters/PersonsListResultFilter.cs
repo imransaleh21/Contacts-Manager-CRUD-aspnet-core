@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Contacts_Manager_CRUD.Filters.ActionFilters
+namespace Contacts_Manager_CRUD.Filters.ResultFilters
 {
     public class PersonsListResultFilter : IAsyncResultFilter
     {
@@ -16,7 +16,7 @@ namespace Contacts_Manager_CRUD.Filters.ActionFilters
             await next();
 
             _logger.LogInformation("{FilterName}.{MethodName} - After executing the action result.", nameof(PersonsListResultFilter), nameof(OnResultExecutionAsync));
-            context.HttpContext.Response.Headers.LastModified = DateTime.Now.ToString("yyyyy-MM-dd");
+            context.HttpContext.Response.Headers["LastModified"] = "4";//DateTime.Now.ToString("yyyyy-MM-dd");
         }
     }
 }

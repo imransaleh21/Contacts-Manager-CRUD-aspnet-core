@@ -1,4 +1,6 @@
 ﻿using Contacts_Manager_CRUD.Filters.ActionFilters;
+using Contacts_Manager_CRUD.Filters.AuthorizationFilter;
+using Contacts_Manager_CRUD.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
 using Rotativa.AspNetCore;
 using ServiceContracts;
@@ -68,6 +70,7 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("create")]
         [HttpGet]
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Create_Method-Custom-key", "Custom-value", 1 }, Order = 1)] // here order set which filter to execute first like method or class level
+        [TypeFilter(typeof(TokenResultFilter))]
         public async Task<IActionResult> Create()
         {
             // This action method is used to render the Create view for adding a new person
@@ -84,6 +87,7 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("create")]
         [HttpPost]
         [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))] // validation or other pre-operations is done here
+        [TypeFilter(typeof(TokenAuthorizationFilter))]
         public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
         {
             // If the model state is valid, add the person using the service
