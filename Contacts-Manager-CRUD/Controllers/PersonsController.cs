@@ -1,5 +1,6 @@
 ﻿using Contacts_Manager_CRUD.Filters.ActionFilters;
 using Contacts_Manager_CRUD.Filters.AuthorizationFilter;
+using Contacts_Manager_CRUD.Filters.ExceptionFilters;
 using Contacts_Manager_CRUD.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
 using Rotativa.AspNetCore;
@@ -12,6 +13,7 @@ namespace Contacts_Manager_CRUD.Controllers
     [Route("[controller]")] // This is as same as [Route("persons")]
     //[Route("persons")]
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Controller-Custom-key", "Custom-value", 2 }, Order = 2)]
+    [TypeFilter(typeof(HandleExceptionFilter))] // class level exception filter
     public class PersonsController : Controller
     {
         private readonly IPersonsService _personsService;
