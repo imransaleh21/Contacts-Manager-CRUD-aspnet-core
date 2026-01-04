@@ -12,8 +12,9 @@ namespace Contacts_Manager_CRUD.Controllers
 {
     [Route("[controller]")] // This is as same as [Route("persons")]
     //[Route("persons")]
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Controller-Custom-key", "Custom-value", 2 }, Order = 2)]
+    //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Controller-Custom-key", "Custom-value", 2 }, Order = 2)]
     [TypeFilter(typeof(HandleExceptionFilter))] // class level exception filter
+    [ResponseHeaderActionFilter("Controller-Custom-key", "Custom-value", 2)] // another way to apply filter with attribute
     public class PersonsController : Controller
     {
         private readonly IPersonsService _personsService;
@@ -35,8 +36,9 @@ namespace Contacts_Manager_CRUD.Controllers
         //[Route("index")]
         [Route("/")]
         [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]{"Index-Custom-key", "Custom-value", 1}, Order = 1)]
+        //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]{"Index-Custom-key", "Custom-value", 1}, Order = 1)]
         [TypeFilter(typeof(PersonsListResultFilter))]
+        [ResponseHeaderActionFilter("Index_Method-Custom-key", "Custom-value", 1)] // another way to apply filter with attribute
         public async Task<IActionResult> Index(string searchBy, string searchValue,
             string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
@@ -71,8 +73,9 @@ namespace Contacts_Manager_CRUD.Controllers
         /// <returns></returns>
         [Route("create")]
         [HttpGet]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Create_Method-Custom-key", "Custom-value", 1 }, Order = 1)] // here order set which filter to execute first like method or class level
+        //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] {  }, Order = 1)] // here order set which filter to execute first like method or class level
         [TypeFilter(typeof(TokenResultFilter))]
+        [ResponseHeaderActionFilter("Create_Method-Custom-key", "Custom-value", 1)] // another way to apply filter with attribute
         public async Task<IActionResult> Create()
         {
             // This action method is used to render the Create view for adding a new person
