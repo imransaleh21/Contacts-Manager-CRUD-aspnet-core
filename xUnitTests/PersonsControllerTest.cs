@@ -57,29 +57,30 @@ namespace xUnitTests
         }
         #endregion
         #region Create Person Controller Tests
-        [Fact]
-        public async Task Create_PostRequest_IfModelStateIsInValid_ReturnsCreateView()
-        {
-            //Arrange
-            PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
-            PersonResponse personResponse = _fixture.Create<PersonResponse>();
-            List<CountryResponse> countryResponses = _fixture.Create<List<CountryResponse>>();
+        // As invalid model state code is now shifted to filter, this test is no longer valid.
+        //[Fact]
+        //public async Task Create_PostRequest_IfModelStateIsInValid_ReturnsCreateView()
+        //{
+        //    //Arrange
+        //    PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
+        //    PersonResponse personResponse = _fixture.Create<PersonResponse>();
+        //    List<CountryResponse> countryResponses = _fixture.Create<List<CountryResponse>>();
 
-            _personsServiceMock.Setup(_personsServiceMock => _personsServiceMock.AddPerson(It.IsAny<PersonAddRequest>()))
-                .ReturnsAsync(personResponse);
-            _countriesServiceMock.Setup(_countriesServiceMock => _countriesServiceMock.GetAllCountries())
-                .ReturnsAsync(countryResponses);
+        //    _personsServiceMock.Setup(_personsServiceMock => _personsServiceMock.AddPerson(It.IsAny<PersonAddRequest>()))
+        //        .ReturnsAsync(personResponse);
+        //    _countriesServiceMock.Setup(_countriesServiceMock => _countriesServiceMock.GetAllCountries())
+        //        .ReturnsAsync(countryResponses);
 
-            PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
+        //    PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
 
-            //Act
-            personsController.ModelState.AddModelError("PersonName", "Person Name is required");
-            IActionResult result = await personsController.Create(personAddRequest);
-            //Assert
-            ViewResult viewResult = Assert.IsType<ViewResult>(result);
-            viewResult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
-            viewResult.ViewData.Model.Should().BeEquivalentTo(personAddRequest);
-        }
+        //    //Act
+        //    personsController.ModelState.AddModelError("PersonName", "Person Name is required");
+        //    IActionResult result = await personsController.Create(personAddRequest);
+        //    //Assert
+        //    ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        //    viewResult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
+        //    viewResult.ViewData.Model.Should().BeEquivalentTo(personAddRequest);
+        //}
 
         [Fact]
         public async Task Create_PostRequest_IfModelStateIsValid_RedirectToIndexView()
