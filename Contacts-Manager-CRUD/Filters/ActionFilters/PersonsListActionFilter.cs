@@ -37,7 +37,7 @@ namespace Contacts_Manager_CRUD.Filters.ActionFilters
             }
 
             // Code for searching persons based on the search criteria
-            personsController.ViewBag.SearchField = new Dictionary<string, string>
+            personsController.ViewBag.SearchFields = new Dictionary<string, string>
             {
                 { nameof(PersonResponse.PersonName),  "Person Name" },
                 { nameof(PersonResponse.Email), "Email"},
