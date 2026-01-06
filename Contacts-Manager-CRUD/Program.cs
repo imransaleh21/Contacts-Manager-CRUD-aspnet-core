@@ -53,7 +53,12 @@ var app = builder.Build();
 if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 else
+{
+    // This is the built-in exception handling middleware of ASP.NET Core at the top of the middleware pipeline
+    app.UseExceptionHandler("/error"); // Redirecting to the Error action method of GeneralPurposeController for unhandled exceptions
+    // Custom exception handling middleware
     app.UseExceptionHandlingMiddleware();
+}
 
 // Enabling static files middleware
 app.UseStaticFiles();

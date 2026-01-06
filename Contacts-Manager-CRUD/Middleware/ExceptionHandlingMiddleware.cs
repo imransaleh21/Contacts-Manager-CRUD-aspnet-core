@@ -30,8 +30,9 @@ namespace Contacts_Manager_CRUD.Middleware
                 else
                     _logger.LogError("{ExceptionType} {ExceptionMessage}", ex.GetType().ToString(), ex.Message);
                 // Show generic error message to the client and set the status code as 500 - Internal Server Error
-                httpContext.Response.StatusCode = 500; // Internal Server Error
-                await httpContext.Response.WriteAsync("Something went wrong from the server side. Please try letter.");
+                //httpContext.Response.StatusCode = 500; // Internal Server Error
+                //await httpContext.Response.WriteAsync("Something went wrong from the server side. Please try letter.");
+                throw;
             }
         }
     }
