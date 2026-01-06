@@ -1,25 +1,28 @@
+using Contacts_Manager_CRUD.Filters.ActionFilters;
+using Contacts_Manager_CRUD.Middleware;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using RepositoryContracts;
 using Repository;
-using ServiceContracts;
-using Services;
+using RepositoryContracts;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using Contacts_Manager_CRUD.Filters.ActionFilters;
+using ServiceContracts;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuring Serilog as the logging provider
-builder.Host.UseSerilog( (HostBuilderContext context,
+builder.Host.UseSerilog((HostBuilderContext context,
     IServiceProvider services,
-    LoggerConfiguration configuration) =>{
-        configuration.ReadFrom.Configuration(context.Configuration) // Read configuration from appsettings.json by using IConfiguration
-        .ReadFrom.Services(services); // Read current services and make them available to Serilog
-    });
+    LoggerConfiguration configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration) // Read configuration from appsettings.json by using IConfiguration
+    .ReadFrom.Services(services); // Read current services and make them available to Serilog
+});
 
-builder.Services.AddControllersWithViews( options => {
+builder.Services.AddControllersWithViews(options =>
+{
     // Adding a global action filter to add custom headers to responses
     options.Filters.Add(new ResponseHeaderActionFilter("Global-Custom-key", "Custom-value", 3));
 });
@@ -47,13 +50,16 @@ if (builder.Environment.IsEnvironment("Testing") == false)
 // Building the app
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
-}
+else
+    app.UseExceptionHandlingMiddleware();
 
+// Enabling static files middleware
 app.UseStaticFiles();
+// Enabling routing middleware
 app.UseRouting();
+// Enabling endpoint routing middleware
 app.MapControllers();
 
 app.Run();

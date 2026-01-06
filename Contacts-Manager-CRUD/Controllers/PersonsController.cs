@@ -13,7 +13,7 @@ namespace Contacts_Manager_CRUD.Controllers
     [Route("[controller]")] // This is as same as [Route("persons")]
     //[Route("persons")]
     //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "Controller-Custom-key", "Custom-value", 2 }, Order = 2)]
-    [TypeFilter(typeof(HandleExceptionFilter))] // class level exception filter
+    //[TypeFilter(typeof(HandleExceptionFilter))] // class level exception filter
     [ResponseHeaderActionFilter("Controller-Custom-key", "Custom-value", 2)] // another way to apply filter with attribute
     public class PersonsController : Controller
     {
