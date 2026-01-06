@@ -11,6 +11,7 @@ using OfficeOpenXml;
 using RepositoryContracts;
 using Microsoft.Extensions.Logging;
 using SerilogTimings;
+using Exceptions;
 
 namespace Services
 {
@@ -250,7 +251,7 @@ namespace Services
 
             // Get the person details by Person ID that need to be updated 
             Person? matchedPerson = await _personsRepository.GetPersonByPersonId(personUpdateRequest.PersonId);
-            if (matchedPerson == null) throw new ArgumentException("Invalid person id");
+            if (matchedPerson == null) throw new InvalidPersonIdException("Invalid person id");
 
             // Update the matchedPerson details based on the personUpdateRequest details
             Person personToUpdate = personUpdateRequest.ToPerson();
