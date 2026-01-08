@@ -18,7 +18,11 @@ namespace xUnitTests
 {
     public class PersonsServiceTest
     {
-        private readonly IPersonsService _personsService;
+        private readonly IPersonsGetterService _personsService;
+        private readonly IPersonsAdderService _personsAdderService;
+        private readonly IPersonsUpdaterService _personsUpdaterService;
+        private readonly IPersonsDeleterService _personsDeleterService;
+        private readonly IPersonsSorterService _personsSorterService;
         private readonly IPersonsRepository _personsRepository;
         private readonly Mock<IPersonsRepository> _personsRepositoryMock;
         private readonly Mock<ILogger<PersonsService>> _loggerMock;

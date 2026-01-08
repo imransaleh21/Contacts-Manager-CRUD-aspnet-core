@@ -17,14 +17,21 @@ namespace Contacts_Manager_CRUD.Controllers
     [ResponseHeaderActionFilter("Controller-Custom-key", "Custom-value", 2)] // another way to apply filter with attribute
     public class PersonsController : Controller
     {
-        private readonly IPersonsService _personsService;
+        private readonly IPersonsGetterService _personsGetterService;
+        private readonly IPersonsAdderService _personsAdderService;
+        private readonly IPersonsSorterService _personsSorterService;
         private readonly ICountriesService _countriesService;
         private readonly ILogger<PersonsController> _logger;
-        public PersonsController(IPersonsService personsService,
+        public PersonsController(
+            IPersonsGetterService personsService,
+            IPersonsAdderService personsAdderService,
+            IPersonsSorterService personsSorterService,
             ICountriesService countriesService,
             ILogger<PersonsController> logger)
         {
-            _personsService = personsService;
+            _personsGetterService = personsService;
+            _personsAdderService = personsAdderService;
+            _personsSorterService = personsSorterService;
             _countriesService = countriesService;
             _logger = logger;
         }
@@ -51,14 +58,14 @@ namespace Contacts_Manager_CRUD.Controllers
 
             // based on the search criteria, filtered persons will be returned
             // and if no search criteria is provided, all persons will be returned
-            List<PersonResponse> persons = await _personsService.GetFilteredPersons(searchBy, searchValue);
+            List<PersonResponse> persons = await _personsGetterService.GetFilteredPersons(searchBy, searchValue);
 
             // This viewbag code is now moved to PersonsListActionFilter filter's onActionExecuted method
             //ViewBag.CurrentSearchBy = searchBy;
             //ViewBag.CurrentSearchValue = searchValue;
 
             // Code for sorting persons based on the sort criteria
-            List<PersonResponse>? sortedPersons = _personsService.GetSortedPersons( persons, sortBy, sortOrder);
+            List<PersonResponse>? sortedPersons = _personsSorterService.GetSortedPersons( persons, sortBy, sortOrder);
 
             // This viewbag code is now moved to PersonsListActionFilter filter's onActionExecuted method
             //ViewBag.CurrentSortBy = sortBy;
@@ -96,7 +103,7 @@ namespace Contacts_Manager_CRUD.Controllers
         public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
         {
             // If the model state is valid, add the person using the service
-            PersonResponse newPerson = await _personsService.AddPerson(personAddRequest);
+            PersonResponse newPerson = await _personsAdderService.AddPerson(personAddRequest);
             // After adding the person, redirect to the Index action method to display the updated list of persons
             return RedirectToAction("Index", "Persons");
         }
@@ -107,7 +114,7 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("[Action]")]
         public async Task<IActionResult> PersonsPDF()
         {
-            List<PersonResponse> persons = await _personsService.GetAllPersons();
+            List<PersonResponse> persons = await _personsGetterService.GetAllPersons();
             return new ViewAsPdf("PersonsPDF", persons)
             {
                 FileName = "PersonsReport.pdf",
@@ -117,13 +124,13 @@ namespace Contacts_Manager_CRUD.Controllers
         [Route("[Action]")]
         public async Task<IActionResult> PersonsCSV()
         {
-            MemoryStream personsCSV = await _personsService.GetPersonsListCSV();
+            MemoryStream personsCSV = await _personsGetterService.GetPersonsListCSV();
             return File(personsCSV.ToArray(), "application/octet-stream", "PersonsReport.csv");
         }
         [Route("[Action]")]
         public async Task<IActionResult> PersonsExcel()
         {
-            MemoryStream personsExcel = await _personsService.GetPersonsListExcel();
+            MemoryStream personsExcel = await _personsGetterService.GetPersonsListExcel();
             return File(personsExcel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "PersonsReport.xlsx");
         }

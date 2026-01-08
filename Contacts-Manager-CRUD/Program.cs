@@ -32,7 +32,12 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
-builder.Services.AddScoped<IPersonsService, PersonsService>();
+// Registering Person services
+builder.Services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
+builder.Services.AddScoped<IPersonsAdderService, PersonsAdderService>();
+builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
+builder.Services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
 
 if (builder.Environment.IsEnvironment("Testing") == false)
 {

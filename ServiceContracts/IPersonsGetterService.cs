@@ -6,15 +6,8 @@ namespace ServiceContracts
     /// <summary>
     /// IPersonsService interface defines the contract for person-related operations.
     /// </summary>
-    public interface IPersonsService
+    public interface IPersonsGetterService
     {
-        /// <summary>
-        /// Adds a new person object to the list of persons.
-        /// </summary>
-        /// <param name="personAdd"></param>
-        /// <returns> The same person details, along with newly generated personId</returns>
-        Task<PersonResponse> AddPerson(PersonAddRequest? addPerson);
-
         /// <summary>
         /// By default, this method returns all persons in the list.
         /// </summary>
@@ -38,29 +31,6 @@ namespace ServiceContracts
         Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchValue);
 
         /// <summary>
-        /// This method will sort the persons based on the sort criteria provided,
-        /// </summary>
-        /// <param name="personList">The list of all person</param>
-        /// <param name="sortBy">The fild to be sorted like: Name, email..</param>
-        /// <param name="sortOrder">Ascending or Descending</param>
-        /// <returns>The sorted persons list after sort by ascending or descending order</returns>
-        List<PersonResponse>? GetSortedPersons(List<PersonResponse> personList, string sortBy, SortOrderOptions sortOrder);
-
-        /// <summary>
-        /// This method will update the existing person details based on the provided update request.
-        /// </summary>
-        /// <param name="personUpdate">Person Details to be Updated</param>
-        /// <returns>Updated person info</returns>
-        Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdate);
-
-        /// <summary>
-        /// This method will delete a person based on the provided personId.
-        /// </summary>
-        /// <param name="personId">Person Id of the person who has to be deleted</param>
-        /// <returns>True if deletion is successful, otherwise false</returns>
-        Task<bool> DeletePerson(Guid? personId);
-
-        /// <summary>
         /// Returns persons as CSV
         /// </summary>
         /// <returns>Returns the memory stream with CSV</returns>
@@ -71,6 +41,5 @@ namespace ServiceContracts
         /// </summary>
         /// <returns>Memory stream of Excel data</returns>
         Task<MemoryStream> GetPersonsListExcel();
-
     }
 }
