@@ -23,13 +23,13 @@ namespace Contacts_Manager_CRUD.Controllers
         private readonly ICountriesService _countriesService;
         private readonly ILogger<PersonsController> _logger;
         public PersonsController(
-            IPersonsGetterService personsService,
+            IPersonsGetterService personsGetterService,
             IPersonsAdderService personsAdderService,
             IPersonsSorterService personsSorterService,
             ICountriesService countriesService,
             ILogger<PersonsController> logger)
         {
-            _personsGetterService = personsService;
+            _personsGetterService = personsGetterService;
             _personsAdderService = personsAdderService;
             _personsSorterService = personsSorterService;
             _countriesService = countriesService;

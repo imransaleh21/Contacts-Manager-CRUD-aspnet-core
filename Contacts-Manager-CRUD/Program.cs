@@ -6,7 +6,6 @@ using OfficeOpenXml;
 using Repository;
 using RepositoryContracts;
 using Serilog;
-using Serilog.Sinks.MSSqlServer;
 using ServiceContracts;
 using Services;
 
@@ -33,7 +32,8 @@ builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 // Registering Person services
-builder.Services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+builder.Services.AddScoped<IPersonsGetterService, PersonsGetterServiceReducedExcelColumns>();
+builder.Services.AddScoped<PersonsGetterService, PersonsGetterService>();
 builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 builder.Services.AddScoped<IPersonsAdderService, PersonsAdderService>();
 builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
