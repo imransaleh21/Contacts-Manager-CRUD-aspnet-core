@@ -1,31 +1,27 @@
-﻿using Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoFixture;
+using Entities;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
+using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
-using ServiceContracts.Enums;
 using Services;
-using System.Threading.Tasks;
-using EntityFrameworkCoreMock;
-using Moq;
-using AutoFixture;
-using FluentAssertions;
-using RepositoryContracts;
-using Repository;
 using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
 
 namespace xUnitTests
 {
     public class PersonsServiceTest
     {
-        private readonly IPersonsGetterService _personsService;
+        private readonly IPersonsGetterService _personsGetterService;
         private readonly IPersonsAdderService _personsAdderService;
         private readonly IPersonsUpdaterService _personsUpdaterService;
         private readonly IPersonsDeleterService _personsDeleterService;
         private readonly IPersonsSorterService _personsSorterService;
-        private readonly IPersonsRepository _personsRepository;
+
         private readonly Mock<IPersonsRepository> _personsRepositoryMock;
-        private readonly Mock<ILogger<PersonsService>> _loggerMock;
+        private readonly IPersonsRepository _personsRepository;
 
         private readonly IFixture _fixture;
 
@@ -33,9 +29,27 @@ namespace xUnitTests
         {
             _fixture = new Fixture();
             _personsRepositoryMock = new Mock<IPersonsRepository>();
-            _loggerMock = new Mock<ILogger<PersonsService>>();
             _personsRepository = _personsRepositoryMock.Object;
-            _personsService = new PersonsService(_personsRepository, _loggerMock.Object);
+
+            _personsGetterService = new PersonsGetterService(
+                _personsRepository,
+                NullLogger<PersonsGetterService>.Instance);
+
+            _personsAdderService = new PersonsAdderService(
+                _personsRepository,
+                NullLogger<PersonsAdderService>.Instance);
+
+            _personsUpdaterService = new PersonsUpdaterService(
+                _personsRepository,
+                NullLogger<PersonsUpdaterService>.Instance);
+
+            _personsDeleterService = new PersonsDeleterService(
+                _personsRepository,
+                NullLogger<PersonsDeleterService>.Instance);
+
+            _personsSorterService = new PersonsSorterService(
+                _personsRepository,
+                NullLogger<PersonsSorterService>.Instance);
         }
 
         #region CreatePersonList
@@ -76,7 +90,7 @@ namespace xUnitTests
             //Arrange
             PersonAddRequest? request = null;
             //Assert with Act
-            Func<Task> action = async () => await _personsService.AddPerson(request);
+            Func<Task> action = async () => await _personsAdderService.AddPerson(request);
             await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
@@ -90,7 +104,7 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            Func<Task> action = async () => await _personsService.AddPerson(request);
+            Func<Task> action = async () => await _personsAdderService.AddPerson(request);
             await action.Should().ThrowAsync<ArgumentException>();
         }
 
@@ -104,7 +118,7 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            Func<Task> action = async () => await _personsService.AddPerson(request);
+            Func<Task> action = async () => await _personsAdderService.AddPerson(request);
             await action.Should().ThrowAsync<ArgumentException>();
         }
 
@@ -118,7 +132,7 @@ namespace xUnitTests
             };
 
             //Assert with Act
-            Func<Task> action = async () => await _personsService.AddPerson(request);
+            Func<Task> action = async () => await _personsAdderService.AddPerson(request);
             await action.Should().ThrowAsync<ArgumentException>();
         }
 
@@ -136,7 +150,7 @@ namespace xUnitTests
             _personsRepositoryMock.Setup(mockFun => mockFun.AddPerson(It.IsAny<Person>()))
                 .ReturnsAsync(person);
             //Act
-            PersonResponse personResponseWhileAdd = await _personsService.AddPerson(request);
+            PersonResponse personResponseWhileAdd = await _personsAdderService.AddPerson(request);
             personResponse.PersonId = personResponseWhileAdd.PersonId;
 
             ////Assert
@@ -153,7 +167,7 @@ namespace xUnitTests
             Guid? PersonId = null;
 
             //Assert with Act
-            PersonResponse? result = await _personsService.GetPersonByPersonId(PersonId);
+            PersonResponse? result = await _personsGetterService.GetPersonByPersonId(PersonId);
             result.Should().BeNull();
         }
 
@@ -169,7 +183,7 @@ namespace xUnitTests
             _personsRepositoryMock.Setup(mockFun => mockFun.GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(person);
             //Act
-            PersonResponse? getPersonResponseById = await _personsService.GetPersonByPersonId(person.PersonId);
+            PersonResponse? getPersonResponseById = await _personsGetterService.GetPersonByPersonId(person.PersonId);
 
             //Assert
             // fluent assertion gives error in comparing two PersonResponse objects
@@ -185,7 +199,7 @@ namespace xUnitTests
             _personsRepositoryMock.Setup(mockFun => mockFun.GetAllPersons())
                 .ReturnsAsync(new List<Person>());
             //Act
-            var persons = await _personsService.GetAllPersons();
+            var persons = await _personsGetterService.GetAllPersons();
             //Assert
             persons.Should().BeEmpty();
         }
@@ -199,7 +213,7 @@ namespace xUnitTests
                 .ReturnsAsync(personList);
             List<PersonResponse> personResponse = personList.Select(p => p.ToPersonResponse()).ToList();
             //Act
-            List<PersonResponse> personResponsesWhileGettingAllPerson = await _personsService.GetAllPersons();
+            List<PersonResponse> personResponsesWhileGettingAllPerson = await _personsGetterService.GetAllPersons();
             //Assert
             personResponsesWhileGettingAllPerson.Should().BeEquivalentTo(personResponse);
         }
@@ -215,7 +229,7 @@ namespace xUnitTests
                 .ReturnsAsync(personList);
             List<PersonResponse> personResponsesOfPersonList = personList.Select(p => p.ToPersonResponse()).ToList();
             //Act
-            List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "");
+            List<PersonResponse> filteredPersonResponse = await _personsGetterService.GetFilteredPersons(nameof(Person.PersonName), "");
 
             //Assert
             filteredPersonResponse.Should().BeEquivalentTo(personResponsesOfPersonList);
@@ -229,7 +243,7 @@ namespace xUnitTests
             _personsRepositoryMock.Setup(mockFun => mockFun.GetFilteredPersons(It.IsAny<Expression<Func<Person, bool>>>()))
                  .ReturnsAsync(new List<Person> { personList[1] });
             //Act
-            List<PersonResponse> filteredPersonResponse = await _personsService.GetFilteredPersons(nameof(Person.PersonName), "ra");
+            List<PersonResponse> filteredPersonResponse = await _personsGetterService.GetFilteredPersons(nameof(Person.PersonName), "ra");
 
             //Assert
             filteredPersonResponse.Should().OnlyContain(pr =>

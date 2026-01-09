@@ -14,10 +14,14 @@ namespace xUnitTests
 {
     public class PersonsControllerTest
     {
-        private readonly IPersonsGetterService _personsService;
+        private readonly IPersonsGetterService _personsGettterService;
+        private readonly IPersonsAdderService _personsAdderService;
+        private readonly IPersonsSorterService _personsSorterService;
         private readonly ICountriesService _countriesService;
 
-        private readonly Mock<IPersonsGetterService> _personsServiceMock;
+        private readonly Mock<IPersonsGetterService> _personsGetterServiceMock;
+        private readonly Mock<IPersonsAdderService> _personsAdderServiceMock;
+        private readonly Mock<IPersonsSorterService> _personsSorterServiceMock;
         private readonly Mock<ICountriesService> _countriesServiceMock;
 
         private readonly Mock<ILogger<PersonsController>> _loggerMock;
@@ -25,8 +29,12 @@ namespace xUnitTests
         public PersonsControllerTest()
         {
             _fixture = new Fixture();
-            _personsServiceMock = new Mock<IPersonsGetterService>();
-            _personsService = _personsServiceMock.Object;
+            _personsGetterServiceMock = new Mock<IPersonsGetterService>();
+            _personsGettterService = _personsGetterServiceMock.Object;
+            _personsAdderServiceMock = new Mock<IPersonsAdderService>();
+            _personsAdderService = _personsAdderServiceMock.Object;
+            _personsSorterServiceMock = new Mock<IPersonsSorterService>();
+            _personsSorterService = _personsSorterServiceMock.Object;
             _countriesServiceMock = new Mock<ICountriesService>();
             _countriesService = _countriesServiceMock.Object;
             _loggerMock = new Mock<ILogger<PersonsController>>();
@@ -38,13 +46,19 @@ namespace xUnitTests
         {
             //Arrange
             List<PersonResponse> personResponses = _fixture.Create<List<PersonResponse>>();
-            PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
+            PersonsController personsController = new(
+                _personsGettterService,
+                _personsAdderService,
+                _personsSorterService,
+                _countriesService,
+                _loggerMock.Object
+                );
 
-            _personsServiceMock.Setup(_personsServiceMock => 
+            _personsGetterServiceMock.Setup(_personsServiceMock =>
             _personsServiceMock.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(personResponses);
 
-            _personsServiceMock.Setup(_personsServiceMock =>
+            _personsSorterServiceMock.Setup(_personsServiceMock =>
             _personsServiceMock.GetSortedPersons(It.IsAny<List<PersonResponse>>(), It.IsAny<string>(), It.IsAny<SortOrderOptions>()))
                 .Returns(personResponses);
             //Act
@@ -90,12 +104,18 @@ namespace xUnitTests
             PersonResponse personResponse = _fixture.Create<PersonResponse>();
             List<CountryResponse> countryResponses = _fixture.Create<List<CountryResponse>>();
 
-            _personsServiceMock.Setup(_personsServiceMock => _personsServiceMock.AddPerson(It.IsAny<PersonAddRequest>()))
+            _personsAdderServiceMock.Setup(_personsServiceMock => _personsServiceMock.AddPerson(It.IsAny<PersonAddRequest>()))
                 .ReturnsAsync(personResponse);
             _countriesServiceMock.Setup(_countriesServiceMock => _countriesServiceMock.GetAllCountries())
                 .ReturnsAsync(countryResponses);
 
-            PersonsController personsController = new(_personsService, _countriesService, _loggerMock.Object);
+            PersonsController personsController = new(
+                        _personsGettterService,
+                        _personsAdderService,
+                        _personsSorterService,
+                        _countriesService,
+                        _loggerMock.Object
+                    );
 
             //Act
             IActionResult result = await personsController.Create(personAddRequest);
