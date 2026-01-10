@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.Core", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.Infrastructure", "src\ContactsManager.Infrastructure\ContactsManager.Infrastructure.csproj", "{313F02B1-EB1E-42CB-91B8-E986409C8B63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.ServiceTests", "ContactsManager.ServiceTests\ContactsManager.ServiceTests.csproj", "{6EF15D0E-223F-480F-902A-361080D326EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.ServiceTests", "test\ContactsManager.ServiceTests\ContactsManager.ServiceTests.csproj", "{6EF15D0E-223F-480F-902A-361080D326EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.ControllerTests", "ContactsManager.ControllerTests\ContactsManager.ControllerTests.csproj", "{B208EAC3-DF65-4269-AEBA-0FEEAF23A2C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.ControllerTests", "test\ContactsManager.ControllerTests\ContactsManager.ControllerTests.csproj", "{B208EAC3-DF65-4269-AEBA-0FEEAF23A2C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.IntegrationTests", "ContactsManager.IntegrationTests\ContactsManager.IntegrationTests.csproj", "{1E1492B8-9C2B-4802-AEDB-26EFCB3C58DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.IntegrationTests", "test\ContactsManager.IntegrationTests\ContactsManager.IntegrationTests.csproj", "{1E1492B8-9C2B-4802-AEDB-26EFCB3C58DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
