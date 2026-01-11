@@ -41,6 +41,7 @@
 - [Configuration](#-configuration)
 - [Learning Outcomes](#-learning-outcomes)
 - [Contributing](#-contributing)
+- [Security](#-security)
 - [License](#-license)
 - [Contact](#-contact)
 
@@ -58,6 +59,26 @@ This application provides a full-featured contact management system with Create,
 - 🎨 **Modern UI**: Responsive design with Bootstrap and custom styling
 - 📊 **Multiple Export Formats**: PDF, Excel, and CSV export capabilities
 - 🔐 **Data Validation**: Custom validators and model validation throughout
+
+---
+
+## 🎬 Demo & Screenshots
+
+<div align="center">
+
+### 🖼️ Application Preview
+
+<!-- Add your screenshots here -->
+*Screenshots coming soon! The application features:*
+- 📋 Clean, intuitive contact listing interface
+- ➕ Easy-to-use contact creation forms
+- 🔍 Advanced search and filtering options
+- 📊 Multiple data export formats (PDF, Excel, CSV)
+- 📱 Responsive design that works on all devices
+
+</div>
+
+---
 
 ## ✨ Key Features
 
@@ -443,6 +464,20 @@ This project demonstrates:
 - ✅ Multiple export format generation
 - ✅ Stored procedure integration
 - ✅ Database migrations and seeding
+
+---
+
+## 🔒 Security
+
+We take security seriously. If you discover a security vulnerability, please follow our [Security Policy](SECURITY.md) for responsible disclosure.
+
+Key security features:
+- ✅ Input validation through model validation
+- ✅ SQL injection prevention via Entity Framework Core
+- ✅ XSS protection through Razor encoding
+- ✅ CSRF protection via ASP.NET Core anti-forgery tokens
+
+For more details, see [SECURITY.md](SECURITY.md).
 
 ---
 
