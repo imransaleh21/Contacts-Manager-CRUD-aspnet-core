@@ -1,9 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using ContactsManager.Core.Domain.IdentityEntities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 namespace Entities
 {
-    public class PersonsDbContext : DbContext
+    public class PersonsDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
         public PersonsDbContext(DbContextOptions options) : base(options)
         {
