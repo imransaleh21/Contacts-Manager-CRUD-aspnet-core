@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/imransaleh21/Contacts-Manager-CRUD-aspnet-core/blob/main/README.md
+    about: Check out the comprehensive README for setup and usage information
+  - name: 💬 Discussions
+    url: https://github.com/imransaleh21/Contacts-Manager-CRUD-aspnet-core/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📧 Contact
+    url: https://github.com/imransaleh21
+    about: Contact the project maintainer
