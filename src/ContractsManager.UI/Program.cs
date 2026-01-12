@@ -1,6 +1,9 @@
 using Contacts_Manager_CRUD.Filters.ActionFilters;
 using Contacts_Manager_CRUD.Middleware;
+using ContactsManager.Core.Domain.IdentityEntities;
 using Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using Repository;
@@ -47,6 +50,14 @@ if (builder.Environment.IsEnvironment("Testing") == false)
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); // Connection string from appsettings.json
     });
+
+    // Configuring Identity with ApplicationUser and ApplicationRole
+    builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddEntityFrameworkStores<PersonsDbContext>()
+        .AddDefaultTokenProviders()
+        .AddUserStore<UserStore<ApplicationUser, ApplicationRole, PersonsDbContext, Guid>>()
+        .AddRoleStore<RoleStore<ApplicationRole, PersonsDbContext, Guid>>();
+
     // Setting the EPPlus license context for non-commercial use to generate Excel files
     ExcelPackage.License.SetNonCommercialPersonal("Imran88");
     // Configuring Rotativa for PDF generation from views(HTML)
