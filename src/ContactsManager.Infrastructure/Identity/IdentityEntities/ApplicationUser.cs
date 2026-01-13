@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContactsManager.Core.Domain.IdentityEntities
+namespace ContactsManager.Infrastructure.IdentityEntities
 {
     public class ApplicationUser : IdentityUser<Guid>
     {

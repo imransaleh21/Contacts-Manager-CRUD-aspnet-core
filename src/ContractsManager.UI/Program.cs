@@ -1,6 +1,6 @@
 using Contacts_Manager_CRUD.Filters.ActionFilters;
 using Contacts_Manager_CRUD.Middleware;
-using ContactsManager.Core.Domain.IdentityEntities;
+using ContactsManager.Infrastructure.IdentityEntities;
 using Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

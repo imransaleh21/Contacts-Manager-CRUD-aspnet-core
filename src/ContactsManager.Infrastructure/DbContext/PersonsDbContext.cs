@@ -1,4 +1,4 @@
-﻿using ContactsManager.Core.Domain.IdentityEntities;
+﻿using ContactsManager.Infrastructure.IdentityEntities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
