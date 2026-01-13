@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ContactsManager.Core\ContactsManager.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Identity\" />
+  </ItemGroup>
+
 </Project>
