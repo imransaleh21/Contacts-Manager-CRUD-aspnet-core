@@ -1,6 +1,8 @@
 using Contacts_Manager_CRUD.Filters.ActionFilters;
 using Contacts_Manager_CRUD.Middleware;
+using ContactsManager.Core.IdentityContracts;
 using ContactsManager.Infrastructure.IdentityEntities;
+using ContactsManager.Infrastructure.Identity;
 using Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -41,6 +43,7 @@ builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 builder.Services.AddScoped<IPersonsAdderService, PersonsAdderService>();
 builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
 builder.Services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 if (builder.Environment.IsEnvironment("Testing") == false)
 {

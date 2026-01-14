@@ -1,5 +1,8 @@
 ﻿using Contacts_Manager_CRUD.Controllers;
 using ContactsManager.Core.DTO;
+using ContactsManager.Core.Helpers;
+using ContactsManager.Core.IdentityContracts;
+using ContactsManager.UI.Filters.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManager.UI.Controllers
@@ -7,15 +10,34 @@ namespace ContactsManager.UI.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
+        private readonly IRegisterService _registerService;
+        public AccountController(IRegisterService registerService)
+        {
+            _registerService = registerService;
+        }
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult Register(RegisterDTO registerDTO)
+        [TypeFilter(typeof(RegisterPostActionFilter))]
+        public async Task<IActionResult> Register(RegisterDTO registerDTO)
         {
-            return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            Result<Guid> registerResult = await _registerService.RegisterUser(registerDTO);
+            if (registerResult.IsSuccess)
+            {
+                return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            }
+            else
+            {
+                foreach (string error in registerResult.Errors)
+                {
+                    ModelState.AddModelError("Register", error);
+                }
+                return View(registerDTO);
+            }
+            
         }
     }
 }
