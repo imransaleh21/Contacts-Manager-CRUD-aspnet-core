@@ -11,9 +11,11 @@ namespace ContactsManager.UI.Controllers
     public class AccountController : Controller
     {
         private readonly IRegisterService _registerService;
+        //private readonly ISignInService _signInService;
         public AccountController(IRegisterService registerService)
         {
             _registerService = registerService;
+            //_signInService = signInService;
         }
         [HttpGet]
         public IActionResult Register()

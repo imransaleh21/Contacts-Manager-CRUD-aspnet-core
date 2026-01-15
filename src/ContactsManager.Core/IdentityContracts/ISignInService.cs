@@ -3,8 +3,8 @@ using ContactsManager.Core.Helpers;
 
 namespace ContactsManager.Core.IdentityContracts
 {
-    public interface IRegisterService
+    public interface ISignInService
     {
-        Task<Result<Guid>> RegisterUser(RegisterDTO registerDTO, bool signInAutomatically = true);
+        Task<Result<Guid>> SignInUser(Guid id);
     }
 }

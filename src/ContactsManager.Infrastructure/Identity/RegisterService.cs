@@ -9,11 +9,13 @@ namespace ContactsManager.Infrastructure.Identity
     public class RegisterService : IRegisterService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public RegisterService(UserManager<ApplicationUser> userManager)
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public RegisterService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
-        public async Task<Result<Guid>> RegisterUser(RegisterDTO registerDTO)
+        public async Task<Result<Guid>> RegisterUser(RegisterDTO registerDTO, bool signInAutomatically = true)
         {
             ApplicationUser user = new()
             {
@@ -25,7 +27,11 @@ namespace ContactsManager.Infrastructure.Identity
             IdentityResult identityResult = await _userManager.CreateAsync(user, registerDTO.Password);
             if (identityResult.Succeeded)
             {
-              return Result<Guid>.Success(user.Id);
+                if (signInAutomatically)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                }
+                return Result<Guid>.Success(user.Id);
             }
             else
             {

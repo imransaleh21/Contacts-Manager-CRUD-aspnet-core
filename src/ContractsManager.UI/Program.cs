@@ -81,6 +81,8 @@ else
 
 // Enabling static files middleware
 app.UseStaticFiles();
+// Enabling authentication middleware
+app.UseAuthentication();
 // Enabling routing middleware
 app.UseRouting();
 // Enabling endpoint routing middleware
