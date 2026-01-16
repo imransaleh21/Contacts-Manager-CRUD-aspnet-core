@@ -55,7 +55,13 @@ if (builder.Environment.IsEnvironment("Testing") == false)
     });
 
     // Configuring Identity with ApplicationUser and ApplicationRole
-    builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+    builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
+        options.Password.RequiredLength = 3;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireDigit = false;
+    })
         .AddEntityFrameworkStores<PersonsDbContext>()
         .AddDefaultTokenProviders()
         .AddUserStore<UserStore<ApplicationUser, ApplicationRole, PersonsDbContext, Guid>>()

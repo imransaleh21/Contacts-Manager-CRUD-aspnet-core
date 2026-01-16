@@ -38,12 +38,30 @@
                                 }
                                 else
                                 {
-                                    <li>
-                                        <a href="~/Account/Register">Register</a>
-                                    </li>
-                                    <li>
-                                        <a href="~/Account/Login">Login</a>
-                                    </li>
+                                    @if (ViewBag.ActivePage == "~/Account/Login")
+                                    {
+                                        <li>
+                                            <a href="~/Account/Login" class="nav-active">Login</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a href="~/Account/Login">Login</a>
+                                        </li>
+                                    }
+                                    @if (ViewBag.ActivePage == "~/Account/Register")
+                                    {
+                                        <li>
+                                            <a href="~/Account/Register" class="nav-active">Register</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a href="~/Account/Register">Register</a>
+                                        </li>
+                                    }
                                 }
                             </ul>
 
@@ -58,10 +76,31 @@
             <div class="navbar mb">
 
                 <ul>
-                    <li>
-                        <a href="~/persons/index">Persons</a>
-                        <a href="~/Countries/UploadFromExcel">Upload Countries</a>
-                    </li>
+                    @if (ViewBag.ActivePage == "~/persons/index")
+                    {
+                        <li>
+                            <a href="~/persons/index" class="nav-active">Persons</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="~/persons/index">Persons</a>
+                        </li>
+                    }
+                    @if (ViewBag.ActivePage == "~/Countries/UploadFromExcel")
+                    {
+                        <li>
+                            <a href="~/Countries/UploadFromExcel" class="nav-active">Upload Countries</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="~/Countries/UploadFromExcel">Upload Countries</a>
+                        </li>
+                    }
+
                 </ul>
             </div>
 
