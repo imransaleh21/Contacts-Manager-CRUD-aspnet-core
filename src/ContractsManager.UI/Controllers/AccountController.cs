@@ -11,12 +11,15 @@ namespace ContactsManager.UI.Controllers
     public class AccountController : Controller
     {
         private readonly IRegisterService _registerService;
-        //private readonly ISignInService _signInService;
-        public AccountController(IRegisterService registerService)
+        private readonly ISignInService _signInService;
+        private readonly ILogOutService _logOutService;
+        public AccountController(IRegisterService registerService, ISignInService signInService, ILogOutService logOutService)
         {
             _registerService = registerService;
-            //_signInService = signInService;
+            _signInService = signInService;
+            _logOutService = logOutService;
         }
+        #region Register
         [HttpGet]
         public IActionResult Register()
         {
@@ -41,5 +44,36 @@ namespace ContactsManager.UI.Controllers
             }
             
         }
+        #endregion
+        #region Login
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        [TypeFilter(typeof(LoginPostActionFilter))]
+        public async Task<IActionResult> Login (LoginDTO loginDTO)
+        {
+            Result<Guid> loginResult = await _signInService.SignInUser(loginDTO);
+            if(loginResult.IsSuccess) return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            else
+            {
+                foreach (string error in loginResult.Errors)
+                {
+                    ModelState.AddModelError("Login", error);
+                }
+                return View(loginDTO);
+            }
+        }
+        #endregion
+        #region Logout
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _logOutService.LogOut();
+            return RedirectToAction(nameof(AccountController.Login), "Account");
+        }
+        #endregion
     }
 }

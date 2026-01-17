@@ -5,6 +5,6 @@ namespace ContactsManager.Core.IdentityContracts
 {
     public interface ISignInService
     {
-        Task<Result<Guid>> SignInUser(Guid id);
+        Task<Result<Guid>> SignInUser(LoginDTO loginDTO);
     }
 }

@@ -44,6 +44,8 @@ builder.Services.AddScoped<IPersonsAdderService, PersonsAdderService>();
 builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
 builder.Services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<ISignInService, SignInService>();
+builder.Services.AddScoped<ILogOutService, LogOutService>();
 
 if (builder.Environment.IsEnvironment("Testing") == false)
 {
