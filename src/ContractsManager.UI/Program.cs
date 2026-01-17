@@ -13,6 +13,7 @@ using RepositoryContracts;
 using Serilog;
 using ServiceContracts;
 using Services;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +75,20 @@ if (builder.Environment.IsEnvironment("Testing") == false)
     // Configuring Rotativa for PDF generation from views(HTML)
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 }
+
+builder.Services.AddAuthorization(options =>
+{// Setting a fallback policy that requires authenticated users by default for all endpoints
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser().Build();
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login"; // Redirecting to Login action method of AccountController for unauthenticated users
+    //options.LogoutPath = "/Account/LogOut"; // Redirecting to LogOut action method of AccountController for logging out
+    //options.AccessDeniedPath = "/Account/AccessDenied"; // Redirecting to AccessDenied action method of AccountController for unauthorized access attempts
+});
+
 // Building the app
 var app = builder.Build();
 
@@ -89,10 +104,13 @@ else
 
 // Enabling static files middleware
 app.UseStaticFiles();
-// Enabling authentication middleware
-app.UseAuthentication();
+
 // Enabling routing middleware
 app.UseRouting();
+// Enabling authentication middleware
+app.UseAuthentication();
+// Enabling authorization middleware, it ensures user is authorized to access secure resources
+app.UseAuthorization();
 // Enabling endpoint routing middleware
 app.MapControllers();
 

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Contacts_Manager_CRUD.Controllers
 {
+    [AllowAnonymous]
     public class GeneralPurposeController : Controller
     {
         [Route("Error")]

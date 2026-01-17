@@ -3,11 +3,13 @@ using ContactsManager.Core.DTO;
 using ContactsManager.Core.Helpers;
 using ContactsManager.Core.IdentityContracts;
 using ContactsManager.UI.Filters.ActionFilters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManager.UI.Controllers
 {
     [Route("[controller]/[action]")]
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly IRegisterService _registerService;
