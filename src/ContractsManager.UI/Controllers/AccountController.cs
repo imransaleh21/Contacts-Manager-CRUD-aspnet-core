@@ -15,7 +15,8 @@ namespace ContactsManager.UI.Controllers
         private readonly IRegisterService _registerService;
         private readonly ISignInService _signInService;
         private readonly ILogOutService _logOutService;
-        public AccountController(IRegisterService registerService, ISignInService signInService, ILogOutService logOutService)
+        public AccountController(IRegisterService registerService, ISignInService signInService,
+            ILogOutService logOutService)
         {
             _registerService = registerService;
             _signInService = signInService;

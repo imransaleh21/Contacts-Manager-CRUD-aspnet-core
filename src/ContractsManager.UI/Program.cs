@@ -3,6 +3,7 @@ using Contacts_Manager_CRUD.Middleware;
 using ContactsManager.Core.IdentityContracts;
 using ContactsManager.Infrastructure.IdentityEntities;
 using ContactsManager.Infrastructure.Identity;
+using ContactsManager.Infrastructure.Seeder;
 using Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -33,7 +34,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 
-// Registering services for dependency injection
+// Registering Repositories and Services in the DI container
 builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
@@ -44,6 +45,7 @@ builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 builder.Services.AddScoped<IPersonsAdderService, PersonsAdderService>();
 builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
 builder.Services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
+// Registering Identity services
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ISignInService, SignInService>();
 builder.Services.AddScoped<ILogOutService, LogOutService>();
@@ -91,6 +93,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Building the app
 var app = builder.Build();
+
+// Seed roles
+if (builder.Environment.IsEnvironment("Testing") == false)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        // Getting the RoleManager service to seed roles
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+        await RoleSeeder.SeedAsync(roleManager);
+    }
+}
 
 if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContactsManager.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace ContactsManager.Core.DTO
         [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Invalid Phone Number")]
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
+
+        public UserRoleOptions Role { get; set; } = UserRoleOptions.User;
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
