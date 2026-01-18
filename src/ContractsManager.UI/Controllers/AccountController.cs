@@ -44,7 +44,7 @@ namespace ContactsManager.UI.Controllers
                 }
                 return View(registerDTO);
             }
-            
+
         }
         #endregion
         #region Login
@@ -55,10 +55,17 @@ namespace ContactsManager.UI.Controllers
         }
         [HttpPost]
         [TypeFilter(typeof(LoginPostActionFilter))]
-        public async Task<IActionResult> Login (LoginDTO loginDTO)
+        public async Task<IActionResult> Login(LoginDTO loginDTO, string? returnUrl)
         {
             Result<Guid> loginResult = await _signInService.SignInUser(loginDTO);
-            if(loginResult.IsSuccess) return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            if (loginResult.IsSuccess)
+            {
+                if(!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return LocalRedirect(returnUrl);
+                }
+                return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            }
             else
             {
                 foreach (string error in loginResult.Errors)
