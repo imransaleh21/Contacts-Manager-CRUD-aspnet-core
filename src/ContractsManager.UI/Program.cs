@@ -115,6 +115,12 @@ else
     app.UseExceptionHandlingMiddleware();
 }
 
+// Enforcing HTTP Strict Transport Security (HSTS) for secure communication.
+// It adds the Strict-Transport-Security header to responses and instructs browsers to only use HTTPS for future requests to the site
+app.UseHsts();
+// Enforcing HTTPS redirection middleware
+app.UseHttpsRedirection();
+
 // Enabling static files middleware
 app.UseStaticFiles();
 
